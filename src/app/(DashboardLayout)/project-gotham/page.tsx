@@ -25,7 +25,7 @@ interface CashBalanceProps {
     startDate: string;
     inputs: Inputs;
    }
-   
+
 const SamplePage = () => {
   const [inputs, setInputs] = useState({});
   const [valuesCal1, setCal1] = useState([])
@@ -141,7 +141,7 @@ const SamplePage = () => {
                                 <DatePicker1
                                     label="Expected Launch"
                                     value={selectedDate}
-                                    // onChange={(date) => setSelectedDate(date)}
+                                    onChange={(date) => setSelectedDate(date)}
                                     renderInput={(params: any) => <TextField {...params} />}
                                     sx={{ marginBottom: '10px' }}
                                 />
