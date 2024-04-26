@@ -13,7 +13,7 @@ import TimeGrid from '../components/dashboard/TimeGrid';
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import DatePanel from "react-multi-date-picker/plugins/date_panel" 
 import DatePickerHeader from "react-multi-date-picker/plugins/date_picker_header"
-import { unix } from 'dayjs';
+import * as dayjs from 'dayjs'
 import CurrencyFormat from 'react-currency-format';
 
 interface Inputs {
@@ -25,7 +25,7 @@ interface CashBalanceProps {
     startDate: string;
     inputs: Inputs;
    }
-
+   
 const SamplePage = () => {
   const [inputs, setInputs] = useState({});
   const [valuesCal1, setCal1] = useState([])
@@ -44,6 +44,47 @@ const SamplePage = () => {
     setShowProjectTable(true);
     console.log('Form submitted:', inputs);
   };
+
+  const handleRandomize = () => {
+    // Set a random date 5 years from now
+    setSelectedDate(dayjs().add(Math.floor(Math.random() * 5), 'year'));
+   
+    // Generate random numbers for each input
+    const revenue = Math.floor(Math.random() * 100000000); // Random number between 0 and 100,000,000
+    const varCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+    const devCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+    const fixedCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+    const advanceAmount1 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+    const advanceRevenue1 = Math.floor(Math.random() * 10); // Random number between 0 and 10
+    const advanceAmount2 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+    const advanceRevenue2 = Math.floor(Math.random() * 10); // Random number between 0 and 10    
+    const advanceAmount3 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+    const advanceRevenue3 = Math.floor(Math.random() * 10); // Random number between 0 and 10        
+    const advanceAmount4 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+    const advanceRevenue4 = Math.floor(Math.random() * 10); // Random number between 0 and 10            
+   
+    // Format the numbers as strings with commas for thousands separator
+    const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+   
+    setInputs(prevInputs => ({
+       ...prevInputs,
+       'revenue': `$${formatNumber(revenue)}`,
+       'varCosts': `$${formatNumber(varCosts)}`,
+       'devCosts': `$${formatNumber(devCosts)}`,
+       'fixedCosts': `$${formatNumber(fixedCosts)}`,
+       'advanceAmount1': `$${formatNumber(advanceAmount1)}`,
+       'advanceRevenue1': advanceRevenue1.toString(),
+       'advanceAmount2': `$${formatNumber(advanceAmount2)}`,
+       'advanceRevenue2': advanceRevenue2.toString(),      
+       'advanceAmount3': `$${formatNumber(advanceAmount3)}`,
+       'advanceRevenue3': advanceRevenue3.toString(),       
+       'advanceAmount4': `$${formatNumber(advanceAmount4)}`,
+       'advanceRevenue4': advanceRevenue4.toString(),              
+    }));
+   
+    setShowProjectTable(true);
+   };
+   
 
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -324,6 +365,9 @@ const SamplePage = () => {
                         <Button size="large" variant="contained" color="primary" onClick={handleSubmit}>
                             Calculate
                         </Button>     
+                        <Button style={{ marginLeft: '10px'}} size="large" variant="contained" color="error" onClick={handleRandomize}>
+                            Randomize 🎲
+                        </Button>                             
                     </Grid>                    
 
                 </Grid>
