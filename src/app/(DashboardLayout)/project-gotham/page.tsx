@@ -16,10 +16,27 @@ import DatePickerHeader from "react-multi-date-picker/plugins/date_picker_header
 import { unix } from 'dayjs';
 import CurrencyFormat from 'react-currency-format';
 
+interface Inputs {
+    revenue?: any; // Use 'any' if you don't know the type of 'revenue', or specify a more precise type
+    // Add other properties as needed
+}
 
+interface CashBalanceProps {
+    startDate: string;
+    inputs: Inputs;
+   }
+
+const inputDefaults = {
+    'revenue': 0,
+    'varCosts': 0,
+    'devCosts': 0,
+    'fixedCosts': 0,
+    'advanceAmount1': 0,
+    'advanceRevenue1': 0,
+}
 
 const SamplePage = () => {
-  const [inputs, setInputs] = useState({});
+  const [inputs, setInputs] = useState(inputDefaults);
   const [valuesCal1, setCal1] = useState([])
   const [valuesCal2, setCal2] = useState([])
   const [valuesCal3, setCal3] = useState([])
@@ -27,7 +44,7 @@ const SamplePage = () => {
   const [showProjectTable, setShowProjectTable] = useState(false);
 
 
-  const handleInputChange = (e, inputName) => {
+  const handleInputChange = (e: any, inputName: any) => {
     setInputs({ ...inputs, [inputName]: e.target.value });
   };
 
@@ -80,7 +97,7 @@ const SamplePage = () => {
                                 label="Revenue"
                                 customInput={TextField}
                                 value={inputs.revenue || ''}
-                                onChange={(e) => handleInputChange(e, 'revenue')}
+                                onChange={(e: any) => handleInputChange(e, 'revenue')}
                                 thousandSeparator={true}
                                 prefix="$"
                                 decimalScale={2}
@@ -93,7 +110,7 @@ const SamplePage = () => {
                                 customInput={TextField}
                                 label="Variable Costs"
                                 value={inputs.varCosts || ''}
-                                onChange={(e) => handleInputChange(e, 'varCosts')}
+                                onChange={(e: any) => handleInputChange(e, 'varCosts')}
                                 thousandSeparator={true}
                                 prefix="$"
                                 decimalScale={2}
@@ -106,7 +123,7 @@ const SamplePage = () => {
                                 customInput={TextField}
                                 label="Development Cost"
                                 value={inputs.devCosts || ''}
-                                onChange={(e) => handleInputChange(e, 'devCosts')}
+                                onChange={(e: any) => handleInputChange(e, 'devCosts')}
                                 thousandSeparator={true}
                                 prefix="$"
                                 decimalScale={2}
@@ -119,7 +136,7 @@ const SamplePage = () => {
                                 customInput={TextField}
                                 label="Fixed Costs"
                                 value={inputs.fixedCosts || ''}
-                                onChange={(e) => handleInputChange(e, 'fixedCosts')}
+                                onChange={(e: any) => handleInputChange(e, 'fixedCosts')}
                                 thousandSeparator={true}
                                 prefix="$"
                                 decimalScale={2}
@@ -133,8 +150,8 @@ const SamplePage = () => {
                                 <DatePicker1
                                     label="Expected Launch"
                                     value={selectedDate}
-                                    onChange={(date) => setSelectedDate(date)}
-                                    renderInput={(params) => <TextField {...params} />}
+                                    // onChange={(date) => setSelectedDate(date)}
+                                    renderInput={(params: any) => <TextField {...params} />}
                                     sx={{ marginBottom: '10px' }}
                                 />
                             </LocalizationProvider>

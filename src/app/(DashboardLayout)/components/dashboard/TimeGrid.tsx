@@ -52,7 +52,7 @@ import { start } from "repl";
       },                   
   ];
 
-  const generateTableCells = (startDate) => {
+  const generateTableCells = (startDate: any) => {
     const theme = useTheme();
     const cells = [];
     const currentDate = new Date(startDate);
@@ -70,7 +70,7 @@ import { start } from "repl";
     return cells;
   };  
   
-  const TimeGrid = ({startDate}) => {
+  const TimeGrid: React.FC<{ startDate: any }> = ({ startDate }) => {    
     
     const theme = useTheme();
 

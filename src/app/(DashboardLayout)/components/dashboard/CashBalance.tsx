@@ -180,7 +180,7 @@ import {
       },                     
   ];
 
-  const generateTableCells = (startDate) => {
+  const generateTableCells = (startDate: any) => {
     const theme = useTheme();
     const cells = [];
     const currentDate = new Date(startDate);
@@ -198,7 +198,7 @@ import {
     return cells;
   };  
   
-  const getCategoryTotal  = (category, inputs) => {
+  const getCategoryTotal  = (category: any, inputs: any) => {
     switch(category) {
       case "Total Revenue":
         return parseInt((inputs.revenue ?? '').replace(/[$,]/g, ""), 0);
@@ -223,7 +223,7 @@ import {
     }
 };   
 
-  const calculateContributionProfit = (index, inputs) => {
+  const calculateContributionProfit = (index: any, inputs: any) => {
     var revTotal = getCategoryTotal("Total Revenue", inputs) * products2[0]['data'][index];
     var variableTotal = getCategoryTotal("Variable Costs", inputs) * products2[1]['data'][index];
     var devTotal = getCategoryTotal("-- Development", inputs) * products2[3]['data'][index];
@@ -235,7 +235,7 @@ import {
     return (revTotal - variableTotal - devTotal - otherTotal).toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
   };
 
-  const calculateContributionProfitNum = (index, inputs) => {
+  const calculateContributionProfitNum = (index: any, inputs: any) => {
     var revTotal = getCategoryTotal("Total Revenue", inputs) * products2[0]['data'][index];
     var variableTotal = getCategoryTotal("Variable Costs", inputs) * products2[1]['data'][index];
     var devTotal = getCategoryTotal("-- Development", inputs) * products2[3]['data'][index];
@@ -247,7 +247,7 @@ import {
     return (revTotal - variableTotal - devTotal - otherTotal);
   };  
 
-  const calculateNetBalanceNum = (index, inputs) => {
+  const calculateNetBalanceNum = (index: any, inputs: any) => {
     var contribution = calculateContributionProfitNum(index, inputs)
     var balance = products[1]['data'][index]
     var total = balance + contribution;
@@ -255,7 +255,7 @@ import {
     return total;
   }
 
-  const calculateNetBalance = (index, inputs) => {
+  const calculateNetBalance = (index:any, inputs:any) => {
     var contribution = calculateContributionProfitNum(index, inputs)
     var balance = products[1]['data'][index]
     var total = balance + contribution;
@@ -263,7 +263,7 @@ import {
     return total.toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
   }
 
-  const calculateBackgroundColor = (index, product, inputs, theme) => {
+  const calculateBackgroundColor = (index:any, product:any, inputs:any, theme:any) => {
     // backgroundColor: i === 25 ? theme.palette.warning.main : (i === 36 && value !== 1) ? theme.palette.error.main : 'inherit'
     if (index === 25) {
       return theme.palette.warning.main;
@@ -280,7 +280,7 @@ import {
     return 'inherit'
   } 
   
-  const CashBalance = ({startDate, inputs}) => {
+  const CashBalance: React.FC<{ startDate: any; inputs: any }> = ({ startDate, inputs }) => {
       
     const theme = useTheme();
 

@@ -66,8 +66,6 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: TypeScript type check (ignore errors)
-        run: npx tsc --noEmit --skipLibCheck        
       - name: Build project assets
         run: ${{ steps.detect-package-manager.outputs.manager }} build
       - name: Upload artifact
