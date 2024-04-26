@@ -6,6 +6,9 @@ import {
   IconBat,
   IconDeviceTv,
   IconReportMoney,
+  IconBrandSpeedtest,
+  IconFileReport,
+  IconChartInfographic,
   IconMoodHappy,
   IconTypography,
   IconUserPlus,
@@ -18,13 +21,30 @@ const Menuitems = [
     navlabel: true,
     subheader: "Home",
   },
-
   {
     id: uniqueId(),
-    title: "Actuals",
-    icon: IconReportMoney,
-    href: "/",
+    title: "Company P&L",
+    icon: IconBrandSpeedtest,
+    href: "/profit-and-loss",
   },
+  {
+    id: uniqueId(),
+    title: "Report Views",
+    icon: IconFileReport,
+    href: "/profit-and-loss",
+  },  
+  {
+    id: uniqueId(),
+    title: "Forecasts",
+    icon: IconChartInfographic,
+    href: "/Forecasts",
+  },  
+  {
+    id: uniqueId(),
+    title: "Templates",
+    icon: IconLayoutDashboard,
+    href: "/templates",
+  },    
   {
     navlabel: true,
     subheader: "Projects",
@@ -39,7 +59,7 @@ const Menuitems = [
     id: uniqueId(),
     title: "The Cosmic Shake ",
     icon: IconDeviceTv,
-    href: "/icons",
+    href: "/the-cosmic-shake",
   },  
   // {
   //   id: uniqueId(),
