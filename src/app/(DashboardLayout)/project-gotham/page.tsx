@@ -25,18 +25,9 @@ interface CashBalanceProps {
     startDate: string;
     inputs: Inputs;
    }
-
-const inputDefaults = {
-    'revenue': 0,
-    'varCosts': 0,
-    'devCosts': 0,
-    'fixedCosts': 0,
-    'advanceAmount1': 0,
-    'advanceRevenue1': 0,
-}
-
+   
 const SamplePage = () => {
-  const [inputs, setInputs] = useState(inputDefaults);
+  const [inputs, setInputs] = useState({});
   const [valuesCal1, setCal1] = useState([])
   const [valuesCal2, setCal2] = useState([])
   const [valuesCal3, setCal3] = useState([])
