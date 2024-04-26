@@ -94,10 +94,10 @@ import {
         pname: "Advance #1",
         border: true,
         "data": [
+          1.0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0.4, 0.5,
-          0.10, // launch
+          0, 0, 0, 0, 0,
+          0, // launch
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           1.0 // total   
         ]          
@@ -106,10 +106,10 @@ import {
         pname: "Advance #2",
         border: false,
         data:[
+          1.0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0.4, 0.5,
-          0.10, // launch
+          0, 0, 0, 0, 0,
+          0, // launch
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           1.0 // total   
           ]            
@@ -118,10 +118,10 @@ import {
         pname: "Advance #3",
         border: false,
         data:[
+          1.0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0.4, 0.5,
-          0.10, // launch
+          0, 0, 0, 0, 0,
+          0, // launch
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           1.0 // total   
           ]            
@@ -130,12 +130,12 @@ import {
         pname: "Advance #4",
         border: false,
         data:[
+          1.0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0,
+          0, // launch
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0.4, 0.5,
-          0.10, // launch
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          1.0 // total   
+          1.0 // total     
           ]            
       },            
       {
@@ -190,14 +190,16 @@ import {
   };   
 
   const calculateTotal  = (index, value, product, inputs, calVals) => {
+    var revTotal = getCategoryTotal("Total Revenue", inputs) * products[0]['data'][index];
+
     if (product == "Fixed Costs") {
       var devTotal = getCategoryTotal("-- Development", inputs) * products[3]['data'][index];
       var otherTotal = getCategoryTotal("-- Other", inputs) * products[4]['data'][index];
       return (devTotal + otherTotal).toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
-    if (product == "Advance #1" && inputs.advanceAmount1) {
-
+    if (product == "Advance #1" || product == "Advance #2" || product == "Advance #3"  || product == "Advance #4" ) {
+      return getAdvanceTotal(product, index, revTotal, inputs).toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
     if (product == "Contribution Margin") {
@@ -208,7 +210,12 @@ import {
       var variableTotal = getCategoryTotal("Variable Costs", inputs) * products[1]['data'][index];
       var devTotal = getCategoryTotal("-- Development", inputs) * products[3]['data'][index];
       var otherTotal = getCategoryTotal("-- Other", inputs) * products[4]['data'][index];   
-      var contributionProfit = revTotal - variableTotal - devTotal - otherTotal;
+      var adv1Total = inputs.advanceAmount1 ? getAdvanceTotal("Advance #1", index, revTotal, inputs) : 0;
+      var adv2Total = inputs.advanceAmount2 ? getAdvanceTotal("Advance #2", index, revTotal, inputs) : 0;
+      var adv3Total = inputs.advanceAmount3 ? getAdvanceTotal("Advance #3", index, revTotal, inputs) : 0;
+      var adv4Total = inputs.advanceAmount4 ? getAdvanceTotal("Advance #4", index, revTotal, inputs) : 0;
+      var allAdvTotal = adv1Total + adv2Total + adv3Total + adv4Total;
+      var contributionProfit = revTotal - variableTotal - devTotal - otherTotal + allAdvTotal;
       
       return (contributionProfit / revTotal).toLocaleString(undefined, {style: 'percent', minimumFractionDigits: 2});
       
@@ -219,15 +226,58 @@ import {
       var variableTotal = getCategoryTotal("Variable Costs", inputs) * products[1]['data'][index];
       var devTotal = getCategoryTotal("-- Development", inputs) * products[3]['data'][index];
       var otherTotal = getCategoryTotal("-- Other", inputs) * products[4]['data'][index];      
-      var adv1Total = getCategoryTotal("Advance #1", inputs) * products[5]['data'][index];      
-      var adv2Total = getCategoryTotal("Advance #2", inputs) * products[6]['data'][index];      
-      var adv3Total = getCategoryTotal("Advance #3", inputs) * products[7]['data'][index];      
-      var adv4Total = getCategoryTotal("Advance #4", inputs) * products[8]['data'][index];      
-      return (revTotal - variableTotal - devTotal - otherTotal).toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
+      var adv1Total = inputs.advanceAmount1 ? getAdvanceTotal("Advance #1", index, revTotal, inputs) : 0;
+      var adv2Total = inputs.advanceAmount2 ? getAdvanceTotal("Advance #2", index, revTotal, inputs) : 0;
+      var adv3Total = inputs.advanceAmount3 ? getAdvanceTotal("Advance #3", index, revTotal, inputs) : 0;
+      var adv4Total = inputs.advanceAmount4 ? getAdvanceTotal("Advance #4", index, revTotal, inputs) : 0;
+      var allAdvTotal = adv1Total + adv2Total + adv3Total + adv4Total;
+      return (revTotal - variableTotal - devTotal - otherTotal + allAdvTotal).toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
     return (value * getCategoryTotal(product, inputs)).toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
   };     
+
+  const getAdvanceTotal = (product, index, revTotal, inputs) => {
+    var revenue = 0;
+    var multiplier = 0;
+    var advanceTotal = 0;
+    console.log(product);
+    console.log(inputs);
+    switch(product) {
+      case "Advance #1":
+        advanceTotal = parseInt((inputs.advanceAmount1 ?? '').replace(/[$,]/g, ""), 0);
+        revenue = parseInt(inputs.advanceRevenue1);
+        multiplier = products[5]['data'][index];
+        break;
+      case "Advance #2":
+        revenue = parseInt(inputs.advanceRevenue2);
+        advanceTotal = parseInt((inputs.advanceAmount2 ?? '').replace(/[$,]/g, ""), 0);
+        multiplier = products[6]['data'][index];
+        break;
+      case "Advance #3":
+        advanceTotal = parseInt((inputs.advanceAmount3 ?? '').replace(/[$,]/g, ""), 0);
+        revenue = parseInt(inputs.advanceRevenue3);
+        multiplier = products[7]['data'][index];
+        break;
+      case "Advance #4":        
+      advanceTotal = parseInt((inputs.advanceAmount4 ?? '').replace(/[$,]/g, ""), 0);
+        revenue = parseInt(inputs.advanceRevenue4);
+        multiplier = products[8]['data'][index];
+        break;
+    }
+
+    if (advanceTotal == 0) {
+      return 0;
+    }
+
+    console.log(advanceTotal);
+    console.log(multiplier);
+    if (index >= 25 && revTotal != 0 && revenue) {
+      return (revTotal * revenue / 100 * -1);
+    }
+
+    return multiplier * advanceTotal;
+  }
   
 
   const generateTableCells = (startDate) => {
