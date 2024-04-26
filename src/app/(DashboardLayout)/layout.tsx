@@ -56,11 +56,11 @@ export default function RootLayout({
           {/* ------------------------------------------- */}
           {/* Header */}
           {/* ------------------------------------------- */}
-          <Header toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
+          {/* <Header toggleMobileSidebar={() => setMobileSidebarOpen(true)} /> */}
           {/* ------------------------------------------- */}
           {/* Page Route */}
           {/* ------------------------------------------- */}
-          <Box sx={{ minHeight: "calc(100vh - 170px)", py: 3  }}>
+          <Box sx={{ minHeight: "calc(100vh - 170px)"  }}>
             {children}
           </Box>
           {/* ------------------------------------------- */}
