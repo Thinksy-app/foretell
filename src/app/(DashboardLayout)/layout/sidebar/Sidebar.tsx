@@ -2,6 +2,8 @@ import { useMediaQuery, Box, Drawer } from "@mui/material";
 import Logo from "../shared/logo/Logo";
 import SidebarItems from "./SidebarItems";
 import { Upgrade } from "./Updrade";
+import Typography from '@mui/material/Typography';
+
 
 interface ItemType {
   isMobileSidebarOpen: boolean;
@@ -61,6 +63,7 @@ const Sidebar = ({
             {/* ------------------------------------------- */}
             <Box px={3}>
               <Logo />
+              <Typography ml={1} variant="subtitle2">🎮 Fuchigaming Studios</Typography>
             </Box>
             <Box>
               {/* ------------------------------------------- */}
