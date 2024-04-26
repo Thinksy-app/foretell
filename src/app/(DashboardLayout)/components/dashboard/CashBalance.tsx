@@ -291,11 +291,12 @@ import {
     var variableTotal = getCategoryTotal("Variable Costs", inputs) * products2[1]['data'][index];
     var devTotal = getCategoryTotal("-- Development", inputs) * products2[3]['data'][index];
     var otherTotal = getCategoryTotal("-- Other", inputs) * products2[4]['data'][index];      
-    var adv1Total = getCategoryTotal("Advance #1", inputs) * products2[5]['data'][index];      
-    var adv2Total = getCategoryTotal("Advance #2", inputs) * products2[6]['data'][index];      
-    var adv3Total = getCategoryTotal("Advance #3", inputs) * products2[7]['data'][index];      
-    var adv4Total = getCategoryTotal("Advance #4", inputs) * products2[8]['data'][index];      
-    return (revTotal - variableTotal - devTotal - otherTotal);
+    var adv1Total = inputs.advanceAmount1 ? getAdvanceTotal("Advance #1", index, revTotal, inputs) : 0;
+    var adv2Total = inputs.advanceAmount2 ? getAdvanceTotal("Advance #2", index, revTotal, inputs) : 0;
+    var adv3Total = inputs.advanceAmount3 ? getAdvanceTotal("Advance #3", index, revTotal, inputs) : 0;
+    var adv4Total = inputs.advanceAmount4 ? getAdvanceTotal("Advance #4", index, revTotal, inputs) : 0;
+    var allAdvTotal = adv1Total + adv2Total + adv3Total + adv4Total;    
+    return (revTotal - variableTotal - devTotal - otherTotal + allAdvTotal);
   };  
 
   const calculateNetBalanceNum = (index: any, inputs: any) => {
