@@ -19,7 +19,15 @@ const condenseData = (tableData) => {
         "Net Profit"
     ];
 
-    return [tableData[0]].concat(tableData.filter(row => requiredRows.includes(row[0])));
+    // Find the header row index: assuming date-like entries are recognizable
+    const headerRowIndex = tableData.findIndex(row => 
+        row.some((cell, index) => index > 0 && !isNaN(Date.parse(cell)))
+    );
+
+    const headerRow = headerRowIndex > -1 ? tableData[headerRowIndex] : [];
+
+    // Filter out the specific rows and include the dynamically found header
+    return [headerRow].concat(tableData.filter(row => requiredRows.includes(row[0])));
 }
 
 export const CSVDataProvider = ({ children }) => {
