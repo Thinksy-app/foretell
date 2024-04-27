@@ -51,8 +51,8 @@ const Forecasts = () => {
           <DashboardCard title="Import">
             <Box>
               <Typography>
-                Please import a CSV of the client's last 12+ months of expenses.<br />Use{' '}
-                <Link href="https://docs.google.com/spreadsheets/d/1sXY1UoN7c3A4HWAoKnbDUMJNyEcyix0bAt0ISWRuENQ/edit?usp=sharing" passHref>
+                Please import a CSV of the client's forecasts.<br />Use{' '}
+                <Link target="_blank" href="https://docs.google.com/spreadsheets/d/1z9XcJjfbEUSbj1FvzElepUfhWCmevxTiKLrm2EKAMZU/edit?usp=sharing" passHref>
                   this template
                 </Link>
                 {' '}as an example.
