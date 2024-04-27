@@ -12,6 +12,7 @@ import {
   IconMoodHappy,
   IconTypography,
   IconUserPlus,
+  IconDashboard,
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";
@@ -23,21 +24,27 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
+    title: "Dashboard",
+    icon: IconDashboard,
+    href: "/",
+  },  
+  {
+    id: uniqueId(),
     title: "Company P&L",
-    icon: IconBrandSpeedtest,
+    icon: IconReportMoney,
     href: "/profit-and-loss",
   },
   {
     id: uniqueId(),
-    title: "Report Views",
+    title: "Reports",
     icon: IconFileReport,
-    href: "/profit-and-loss",
+    href: "/reports",
   },  
   {
     id: uniqueId(),
     title: "Forecasts",
     icon: IconChartInfographic,
-    href: "/Forecasts",
+    href: "/forecasts",
   },  
   {
     id: uniqueId(),
