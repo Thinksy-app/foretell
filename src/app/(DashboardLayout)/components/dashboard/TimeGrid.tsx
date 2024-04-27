@@ -9,7 +9,8 @@ import {
     Chip,
     Paper,
   } from "@mui/material";
-  import DashboardCard from "@/app/(DashboardLayout)//components/shared/DashboardCard";
+  import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
+  import EditableTableBody from "@/app/(DashboardLayout)/components/dashboard/EditableTableBody";
   import TableContainer from "@mui/material/TableContainer";
   import BlankCard from "../shared/BlankCard";
   import { useTheme } from "@mui/material/styles";
@@ -109,7 +110,9 @@ import { start } from "repl";
                 </TableCell>                                                                                                                                                               
                 </TableRow>             
               </TableHead>
-              <TableBody>             
+
+              <EditableTableBody theme={theme} products={products}></EditableTableBody>
+              {/* <TableBody>             
 
                 
                 {products.map((product) => (
@@ -135,7 +138,7 @@ import { start } from "repl";
                         ))}
                   </TableRow>
                 ))}
-              </TableBody>
+              </TableBody> */}
             </Table>
           </Box>
         </Box>

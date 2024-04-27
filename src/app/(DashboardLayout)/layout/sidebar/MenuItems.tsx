@@ -13,6 +13,7 @@ import {
   IconTypography,
   IconUserPlus,
   IconDashboard,
+  IconDeviceGamepad2,
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";
@@ -58,16 +59,22 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Gotham Knights",
-    icon: IconBat,
+    title: "Project 1",
+    icon: IconDeviceGamepad2,
     href: "/project-gotham",
   },
   {
     id: uniqueId(),
-    title: "The Cosmic Shake ",
-    icon: IconDeviceTv,
+    title: "Project 2",
+    icon: IconDeviceGamepad2,
     href: "/the-cosmic-shake",
   },  
+  {
+    id: uniqueId(),
+    title: "Project 3",
+    icon: IconDeviceGamepad2,
+    href: "/Project 3",
+  },    
   // {
   //   id: uniqueId(),
   //   title: "Shadow",

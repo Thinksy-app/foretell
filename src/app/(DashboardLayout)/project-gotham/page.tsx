@@ -92,12 +92,12 @@ const SamplePage = () => {
 
   return ( 
 
-    <PageContainer title="Project Gotham: Projections" description="Enter Your Projections:">
+    <PageContainer title="Project 1: Projections" description="Enter Your Projections:">
 
         <Grid container spacing={3}>
 
             <Grid item xs={12} lg={12}>
-                <DashboardCard title="Project: Gotham Knights"></DashboardCard>
+                <DashboardCard title="Project 1"></DashboardCard>
             </Grid>     
 
             <Grid item xs={12} lg={12}>           

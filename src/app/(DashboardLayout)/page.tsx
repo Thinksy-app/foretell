@@ -1,5 +1,5 @@
 'use client'
-import { Grid, Box, IconButton, Badge, Button} from '@mui/material';
+import { Grid, Box, Typography, IconButton, Badge, Link, Button} from '@mui/material';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 // components
@@ -20,12 +20,6 @@ import { useState } from 'react';
 const Dashboard = () => {
   const [fileSelected, setFileSelected] = useState(false);
   const { csvData, condensedCSVData } = useCSVDataContext();
-
-  const handleFileInputChange = (e) => {
-    setTimeout(() => {
-      setFileSelected(true);
-    }, 1000); // Adjust delay time as needed
-  };
     
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   return (
@@ -38,9 +32,27 @@ const Dashboard = () => {
           </Grid>              
           <Grid item xs={12} lg={12}>
           </Grid>
+
+
+          {!condensedCSVData || condensedCSVData.length === 0 && 
+            <Grid item xs={12} lg={4}>
+              <DashboardCard title="No Data :(">
+                <Box>
+                  <Typography>
+                    Please upload your client's forecasts in the{' '}
+                    <Link href="/forecasts" passHref>
+                      forecasts tab
+                    </Link>  in order to generate your pro-forma models
+                  </Typography>
+                </Box>
+              </DashboardCard>
+            </Grid>          
+          }
+          
           <Grid item xs={12} lg={12}>
             {condensedCSVData && condensedCSVData.length > 0 && <CSVTable tableData={condensedCSVData} />}
           </Grid>
+          
           <Grid item xs={12} lg={4}>
             <Grid container spacing={3}>
 

@@ -92,7 +92,7 @@ const TheCosmicShake = () => {
 
   return ( 
 
-    <PageContainer title="🦇 Project Gotham: Projections" description="Enter Your Projections:">
+    <PageContainer title="Project 1" description="Enter Your Projections:">
 
         <Grid container spacing={3}>
 
