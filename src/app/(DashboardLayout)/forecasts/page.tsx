@@ -87,7 +87,7 @@ const Forecasts = () => {
         </Grid> */}
 
         <Grid item xs={12} lg={12}>
-          {fileSelected && <CSVTable tableData={csvData}/>}
+          {csvData && csvData.length > 0 && <CSVTable tableData={csvData} />}
         </Grid>        
 
 

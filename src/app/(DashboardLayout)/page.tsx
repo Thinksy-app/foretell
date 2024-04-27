@@ -12,11 +12,14 @@ import Blog from '@/app/(DashboardLayout)/components/dashboard/Blog';
 import ProductSales from '@/app/(DashboardLayout)/components/dashboard/ProductSales';
 import { IconQuestionMark, IconMenu } from "@tabler/icons-react";
 import React, { useRef } from 'react';
+import CSVTable from '@/app/(DashboardLayout)/components/dashboard/CSVTable';
+import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
 
 import { useState } from 'react';
 
 const Dashboard = () => {
   const [fileSelected, setFileSelected] = useState(false);
+  const { csvData, condensedCSVData } = useCSVDataContext();
 
   const handleFileInputChange = (e) => {
     setTimeout(() => {
@@ -36,8 +39,7 @@ const Dashboard = () => {
           <Grid item xs={12} lg={12}>
           </Grid>
           <Grid item xs={12} lg={12}>
-            {/* <ProfitExpenses /> */}
-            {fileSelected && <TempTable />}
+            {condensedCSVData && condensedCSVData.length > 0 && <CSVTable tableData={condensedCSVData} />}
           </Grid>
           <Grid item xs={12} lg={4}>
             <Grid container spacing={3}>

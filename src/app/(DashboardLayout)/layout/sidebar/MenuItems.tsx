@@ -34,24 +34,24 @@ const Menuitems = [
     icon: IconReportMoney,
     href: "/profit-and-loss",
   },
-  {
-    id: uniqueId(),
-    title: "Reports",
-    icon: IconFileReport,
-    href: "/reports",
-  },  
+  // {
+  //   id: uniqueId(),
+  //   title: "Reports",
+  //   icon: IconFileReport,
+  //   href: "/reports",
+  // },  
   {
     id: uniqueId(),
     title: "Forecasts",
     icon: IconChartInfographic,
     href: "/forecasts",
   },  
-  {
-    id: uniqueId(),
-    title: "Templates",
-    icon: IconLayoutDashboard,
-    href: "/templates",
-  },    
+  // {
+  //   id: uniqueId(),
+  //   title: "Templates",
+  //   icon: IconLayoutDashboard,
+  //   href: "/templates",
+  // },    
   {
     navlabel: true,
     subheader: "Projects",
