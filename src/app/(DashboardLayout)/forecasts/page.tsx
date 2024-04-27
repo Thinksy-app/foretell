@@ -1,7 +1,9 @@
 'use client';
 import { Typography, Grid, Box, Button } from '@mui/material';
 import Link from 'next/link';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, createContext, useContext } from 'react';
+import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
+
 import Papa from 'papaparse';
 
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
@@ -12,8 +14,7 @@ import CSVTable from '../components/dashboard/CSVTable';
 const Forecasts = () => {
   const [fileSelected, setFileSelected] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);  
-  const [csvData, setCsvData] = useState([]);
-  const [tableData, setTableData] = useState<Array<Array<string>>>([]);
+  const { csvData, setCSVData } = useCSVDataContext();
 
   const handleFileInputChange = (e) => {
     const files = e.target.files;
@@ -27,14 +28,14 @@ const Forecasts = () => {
 
     const reader = new FileReader();
     reader.onload = (e: ProgressEvent<FileReader>) => {
-    const text = e.target?.result as string;
-    Papa.parse(text, {
-        complete: (results) => {
-          setTableData(results.data as Array<Array<string>>);
-        },
-        header: false,
-        skipEmptyLines: 'greedy'
-    });
+      const text = e.target?.result as string;
+      Papa.parse(text, {
+          complete: (results) => {
+            setCSVData(results.data as Array<Array<string>>);
+          },
+          header: false,
+          skipEmptyLines: 'greedy'
+      });
     };
     reader.readAsText(file);
 };
@@ -72,7 +73,7 @@ const Forecasts = () => {
                   color="primary"
                   onClick={() => fileInputRef.current.click()}
                 >
-                  Import CSV of company actuals
+                  Upload CSV
                 </Button>
               </Box>
 
@@ -86,7 +87,7 @@ const Forecasts = () => {
         </Grid> */}
 
         <Grid item xs={12} lg={12}>
-          {fileSelected && <CSVTable tableData={tableData}/>}
+          {fileSelected && <CSVTable tableData={csvData}/>}
         </Grid>        
 
 

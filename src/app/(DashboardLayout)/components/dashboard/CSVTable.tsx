@@ -26,7 +26,7 @@ const CSVTable = ({tableData}) => {
 //   }, []);
 
   return (
-    <DashboardCard>
+    <DashboardCard title="Company Forecasts">
       {tableData.length > 0 && (
         <Table stickyHeader aria-label="simple table">
           <TableHead>
