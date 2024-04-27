@@ -19,10 +19,7 @@ const condenseData = (tableData) => {
         "Net Profit"
     ];
 
-    console.log(tableData)
-    var total = tableData.filter(row => requiredRows.includes(row[0]));    
-    console.log(total)
-    return total;
+    return [tableData[0]].concat(tableData.filter(row => requiredRows.includes(row[0])));
 }
 
 export const CSVDataProvider = ({ children }) => {
