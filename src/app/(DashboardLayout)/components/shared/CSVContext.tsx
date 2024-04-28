@@ -4,18 +4,16 @@ import TimeGrid from '../dashboard/TimeGrid';
 // const CSVDataContext = createContext([]);
 
 interface Advance {
-    amount: number;
-    date: string;
     revenueShare: number;
-    recoupAmount: number;
-    installmentDate1: string;
-    installmentAmount1: number;
-    installmentDate2: string;
-    installmentAmount2: number;
-    installmentDate3: string;
-    installmentAmount3: number;
-    installmentDate4: string;
-    installmentAmount4: number;
+    recoupAmount?: number;
+    installmentDate1?: string;
+    installmentAmount1?: number;
+    installmentDate2?: string;
+    installmentAmount2?: number;
+    installmentDate3?: string;
+    installmentAmount3?: number;
+    installmentDate4?: string;
+    installmentAmount4?: number;
 }
   
 interface Project {
@@ -24,8 +22,8 @@ interface Project {
     devCosts: number;
     fixedCosts: number;    
     expectedLaunchDate: string;
-    // firstAdvance: Advance;
-    // secondAdvance: Advance;
+    firstAdvance?: Advance;
+    secondAdvance?: Advance;
 }
 
 const defaultProject = {
@@ -33,7 +31,7 @@ const defaultProject = {
     variableCosts: 0,
     devCosts: 0,
     fixedCosts: 0,
-    expectedLaunchDate: ""
+    expectedLaunchDate: "",
 };
 
 const CSVDataContext = createContext({
@@ -42,7 +40,7 @@ const CSVDataContext = createContext({
     condensedCSVData: [],
     setCondensedCSVData: () => {},
     Project1: defaultProject,    
-    setProject1: () => {}
+    setProject1: (project: Project) => {}
 });
   
 const condenseData = (tableData) => {

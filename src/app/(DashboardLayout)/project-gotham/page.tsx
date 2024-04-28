@@ -16,17 +16,6 @@ import DatePickerHeader from "react-multi-date-picker/plugins/date_picker_header
 import * as dayjs from 'dayjs'
 import CurrencyFormat from 'react-currency-format';
 import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
-
-interface Inputs {
-    revenue?: any; // Use 'any' if you don't know the type of 'revenue', or specify a more precise type
-    // Add other properties as needed
-}
-
-interface CashBalanceProps {
-    startDate: string;
-    inputs: Inputs;
-}
-   
    
 const AdvanceSection = ({ inputs, handleInputChange, selectedDate, setSelectedDate }) => {
   return (
@@ -91,22 +80,15 @@ const AdvanceSection = ({ inputs, handleInputChange, selectedDate, setSelectedDa
     </>
   );
 };
-
    
-const SamplePage = () => {
-  const [inputs, setInputs] = useState({});
-  const [valuesCal1, setCal1] = useState([])
-  const [valuesCal2, setCal2] = useState([])
-  const [valuesCal3, setCal3] = useState([])
-  const [valuesCal4, setCal4] = useState([])
-  const [showProjectTable, setShowProjectTable] = useState(false);
-
-
-  const handleInputChangePrev = (e: any, inputName: any) => {
-    setInputs({ ...inputs, [inputName]: e.target.value });
-  };
-
-    
+const Project1Page = () => {
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [inputs, setInputs] = useState({});
+    const [valuesCal1, setCal1] = useState([])
+    const [valuesCal2, setCal2] = useState([])
+    const [valuesCal3, setCal3] = useState([])
+    const [valuesCal4, setCal4] = useState([])
+    const [showProjectTable, setShowProjectTable] = useState(false);
     const { Project1, setProject1 } = useCSVDataContext();  // Import and use your context
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: keyof typeof Project1) => {
@@ -117,63 +99,46 @@ const SamplePage = () => {
         }));
     };
 
+    const handleSubmit = () => {
+        // Handle form submission here
+        setShowProjectTable(true);
+    };
 
-  const handleSubmit = () => {
-    // Handle form submission here
-    setShowProjectTable(true);
-    console.log('Form submitted:', inputs);
-  };
+    const handleRandomize = () => {
+        // Generate random numbers for each input
+        const expectedLaunchDate = dayjs().add(Math.floor(Math.random() * 5), 'year'); // Random date 5 years from now
+        const revenue = Math.floor(Math.random() * 100000000); // Random number between 0 and 100,000,000
+        const varCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+        const devCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+        const fixedCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+        const firstAdvance = {revenueShare: Math.floor(Math.random() * 10)};
 
-  const handleRandomize = () => {
-    // Set a random date 5 years from now
-    setSelectedDate(dayjs().add(Math.floor(Math.random() * 5), 'year'));
-   
-    // Generate random numbers for each input
-    const revenue = Math.floor(Math.random() * 100000000); // Random number between 0 and 100,000,000
-    const varCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const devCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const fixedCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const advanceAmount1 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const advanceRevenue1 = Math.floor(Math.random() * 10); // Random number between 0 and 10
-    const advanceAmount2 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const advanceRevenue2 = Math.floor(Math.random() * 10); // Random number between 0 and 10    
-   
-    // Format the numbers as strings with commas for thousands separator
-    const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-   
-    // Update Project1 in context
-    setProject1({
-        ...Project1,
-        expectedLaunchDate: dayjs().add(Math.floor(Math.random() * 5), 'year'),
-        revenue,
-        devCosts,
-        variableCosts: varCosts,
-        fixedCosts,
-        advances: [
-        { name: 'Advance 1', amount: advanceAmount1, date: dayjs().add(Math.floor(Math.random() * 5), 'year') },
-        { name: 'Advance 2', amount: advanceAmount2, date: dayjs().add(Math.floor(Math.random() * 5), 'year') },
-        // If additional advances or details needed, modify or add here
-        ]
-    });
-   
-    setShowProjectTable(true);
-   };   
+        // Update Project1 in context
+        setProject1({
+            ...Project1,
+            expectedLaunchDate,
+            revenue,
+            devCosts,
+            variableCosts: varCosts,
+            fixedCosts,
+            firstAdvance,
+        });
 
-  const [selectedDate, setSelectedDate] = useState(null);
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+        setShowProjectTable(true);
+    };   
 
   return ( 
-
     <PageContainer title="Project 1: Projections" description="Enter Your Projections:">
 
         <Grid container spacing={3}>
 
+            {/* Title */}
             <Grid item xs={12} lg={12}>
                 <DashboardCard title="Project 1"></DashboardCard>
             </Grid>     
 
-            <Grid item xs={12} lg={12}>           
+            {/* User Input */}
+            <Grid item xs={12} lg={12}>
                 <DashboardCard title="Projections">                    
                     <Grid container spacing={3}>
 
@@ -244,7 +209,7 @@ const SamplePage = () => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DatePicker1
                                         label="Expected Launch"
-                                        value={selectedDate}
+                                        value={Project1.expectedLaunchDate}
                                         onChange={(date) => handleInputChange(e, 'expectedLaunchDate')}
                                         renderInput={(params: any) => <TextField {...params} />}
                                         sx={{ marginBottom: '10px' }}
@@ -264,10 +229,9 @@ const SamplePage = () => {
                                 selectedDate={selectedDate}
                                 setSelectedDate={setSelectedDate}
                             />
-                            
                         </Grid>    
-                        <Grid item xs={12} lg={4}>
 
+                        <Grid item xs={12} lg={4}>
                             <Grid item xs={12}>
                                 <Typography variant="subtitle2" sx={{ padding: '14px' }}>Advance #2:</Typography>
                             </Grid>                                                        
@@ -278,7 +242,6 @@ const SamplePage = () => {
                                 selectedDate={selectedDate}
                                 setSelectedDate={setSelectedDate}
                             />
-                            
                         </Grid>                                                                            
 
                         <Grid item xs={12} lg={12}>
@@ -288,30 +251,28 @@ const SamplePage = () => {
                             <Button style={{ marginLeft: '10px'}} size="large" variant="contained" color="error" onClick={handleRandomize}>
                                 Randomize 🎲
                             </Button>                             
-                        </Grid>   
+                        </Grid>
                     </Grid>                         
                 </DashboardCard>
             </Grid>
 
-
-
+            {/* Time Grid */}
             <Grid item xs={12} lg={12}>
                 {showProjectTable && <TimeGrid key={Date.now()} startDate={selectedDate}/>}
             </Grid>
 
-
+            {/* Project Forecasts */}
             <Grid item xs={12} lg={12}>
                 {showProjectTable && <ProjectTable inputs={inputs} calVals={[valuesCal1, valuesCal2, valuesCal3, valuesCal4]} startDate={selectedDate} key={Date.now()}/>}
             </Grid>
 
+            {/* Cash Balance */}
             <Grid item xs={12} lg={12}>
                 {showProjectTable && <CashBalance startDate={selectedDate} inputs={inputs} key={Date.now()}/>}
-            </Grid>        
-
-
+            </Grid>
         </Grid> 
     </PageContainer>
   );
 };
 
-export default SamplePage;
+export default Project1Page;
