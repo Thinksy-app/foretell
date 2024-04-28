@@ -15,10 +15,68 @@ import DatePickerHeader from "react-multi-date-picker/plugins/date_picker_header
 import * as dayjs from 'dayjs'
 import CurrencyFormat from 'react-currency-format';
 import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
+
+const InstallmentInputs = ({ Project1, setProject1, advanceKey }) => {
+    const handleDateChange = (date, installmentIndex) => {
+      setProject1(prev => ({
+        ...prev,
+        [advanceKey]: {
+          ...prev[advanceKey],
+          [`installmentDate${installmentIndex + 1}`]: date
+        }
+      }));
+    };
+  
+    const handleAmountChange = (value, installmentIndex) => {
+      setProject1(prev => ({
+        ...prev,
+        [advanceKey]: {
+          ...prev[advanceKey],
+          [`installmentAmount${installmentIndex + 1}`]: parseFloat(value.replace(/[^0-9.-]+/g, ""))
+        }
+      }));
+    };
+  
+    return (
+      <>
+        {Array.from({ length: 4 }, (_, index) => (
+          <Grid container spacing={2} key={index}>
+            <Grid item xs={12} sm={6} md={6}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label={`Installment ${index + 1}: Date`}
+                  value={Project1[advanceKey][`installmentDate${index + 1}`]}
+                  onChange={(date) => handleDateChange(date, index)}
+                  renderInput={(params) => <TextField {...params} />}
+                  sx={{ marginBottom: '10px' }}
+                />
+              </LocalizationProvider>
+            </Grid>
+  
+            <Grid item xs={12} sm={6} md={6}>
+              <CurrencyFormat
+                customInput={TextField}
+                label={`Installment ${index + 1}: Amount`}
+                value={Project1[advanceKey][`installmentAmount${index + 1}`] || ''}
+                onChange={(e) => handleAmountChange(e.target.value, index)}
+                thousandSeparator={true}
+                prefix="$"
+                decimalScale={2}
+                allowNegative={false}
+                displayType="input"
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+        ))}
+      </>
+    );
+  };
    
 const AdvanceSection = ({ advanceIndex, inputs, handleInputChange, selectedDate, setSelectedDate }) => {
     const { Project1, setProject1 } = useCSVDataContext();
     const advanceKey = advanceIndex === 1 ? 'firstAdvance' : 'secondAdvance';
+
     return (
         <>
         <Grid container spacing={2}>
@@ -53,36 +111,11 @@ const AdvanceSection = ({ advanceIndex, inputs, handleInputChange, selectedDate,
             </Grid>        
         </Grid>
 
-        {Array.from({ length: 4 }, (_, index) => (
-            <Grid container spacing={2} key={index}>
-                <Grid item xs={12} sm={6} md={6}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                    label={`Installment ${index + 1}: Date`}
-                    value={selectedDate}
-                    onChange={(date) => setSelectedDate(date)}
-                    renderInput={(params: any) => <TextField {...params} />}
-                    sx={{ marginBottom: '10px' }}
-                    />
-                </LocalizationProvider>
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={6}>
-                <CurrencyFormat
-                    customInput={TextField}
-                    label={`Installment ${index + 1}: Amount`}
-                    value={inputs[`advanceAmount${index + 1}`] || ''}
-                    onChange={(e) => handleInputChange(e, `advanceAmount${index + 1}`)}
-                    thousandSeparator={true}
-                    prefix="$"
-                    decimalScale={2}
-                    allowNegative={false}
-                    displayType="input"
-                    fullWidth
-                />
-                </Grid>
-            </Grid>
-        ))}
+        <InstallmentInputs
+            Project1={Project1}
+            setProject1={setProject1}
+            advanceKey={advanceKey}
+        />
         </>
     );
 };
@@ -154,9 +187,40 @@ const Project1Page = () => {
         const varCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
         const devCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
         const fixedCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-        const firstAdvance = {revenueShare: Math.floor(Math.random() * 10) + 1, recoupAmount: Math.floor(Math.random() * 1000000)};
-        const secondAdvance = {revenueShare: Math.floor(Math.random() * 10) + 1, recoupAmount: Math.floor(Math.random() * 1000000)};
 
+
+        // Function to generate random installment data
+        const randomInstallment = () => ({
+            date: dayjs().add(Math.floor(Math.random() * 5), 'year'),
+            amount: Math.floor(Math.random() * 100000)
+        });
+
+        const firstAdvance = {
+            revenueShare: Math.floor(Math.random() * 10) + 1,
+            recoupAmount: Math.floor(Math.random() * 1000000),
+            installmentDate1: randomInstallment().date,
+            installmentAmount1: randomInstallment().amount,
+            installmentDate2: randomInstallment().date,
+            installmentAmount2: randomInstallment().amount,
+            installmentDate3: randomInstallment().date,
+            installmentAmount3: randomInstallment().amount,
+            installmentDate4: randomInstallment().date,
+            installmentAmount4: randomInstallment().amount
+        };
+    
+        const secondAdvance = {
+            revenueShare: Math.floor(Math.random() * 10) + 1,
+            recoupAmount: Math.floor(Math.random() * 1000000),
+            installmentDate1: randomInstallment().date,
+            installmentAmount1: randomInstallment().amount,
+            installmentDate2: randomInstallment().date,
+            installmentAmount2: randomInstallment().amount,
+            installmentDate3: randomInstallment().date,
+            installmentAmount3: randomInstallment().amount,
+            installmentDate4: randomInstallment().date,
+            installmentAmount4: randomInstallment().amount
+        };        
+                
         // Update Project1 in context
         setProject1({
             ...Project1,
