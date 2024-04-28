@@ -59,7 +59,7 @@ const EditableTableBody = ({ theme, products }) => {
               </TableCell>
             ))}
             {/* Additional TableCell for total with conditional formatting */}
-            <TableCell align="right" style={{ backgroundColor: total === 100 ? 'inherit' : theme.palette.error.main }}>
+            <TableCell align="right" style={{ backgroundColor: total === 100 ? theme.palette.success.main : theme.palette.error.main }}>
               <Typography variant="subtitle1">{`${total.toFixed(2)}%`}</Typography>
             </TableCell>
           </TableRow>
