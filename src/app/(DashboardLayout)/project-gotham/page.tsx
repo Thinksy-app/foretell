@@ -154,7 +154,8 @@ const Project1Page = () => {
         const varCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
         const devCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
         const fixedCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-        const firstAdvance = {revenueShare: Math.floor(Math.random() * 10)};
+        const firstAdvance = {revenueShare: Math.floor(Math.random() * 10) + 1, recoupAmount: Math.floor(Math.random() * 1000000)};
+        const secondAdvance = {revenueShare: Math.floor(Math.random() * 10) + 1, recoupAmount: Math.floor(Math.random() * 1000000)};
 
         // Update Project1 in context
         setProject1({
@@ -165,6 +166,7 @@ const Project1Page = () => {
             variableCosts: varCosts,
             fixedCosts,
             firstAdvance,
+            secondAdvance
         });
 
         setShowProjectTable(true);
