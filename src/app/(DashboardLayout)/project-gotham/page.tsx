@@ -16,68 +16,75 @@ import * as dayjs from 'dayjs'
 import CurrencyFormat from 'react-currency-format';
 import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
    
-const AdvanceSection = ({ inputs, handleInputChange, selectedDate, setSelectedDate }) => {
-  return (
-    <>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={6}>
-          <TextField
-            fullWidth
-            label="Revenue Share %"
-            value={inputs.advanceRevenue1 || ''}
-            sx={{ marginBottom: '10px' }}
-            onChange={(e) => handleInputChange(e, 'advanceRevenue1')}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={6}>
-            <CurrencyFormat
-                customInput={TextField}
-                label="Recoup Amount"
-                sx={{ marginBottom: '10px' }}
-                value={inputs.advanceAmount1 || ''}
-                onChange={(e) => handleInputChange(e, 'advanceAmount1')}
-                thousandSeparator={true}
-                prefix="$"
-                decimalScale={2}
-                allowNegative={false}
-                displayType="input"
+const AdvanceSection = ({ advanceIndex, inputs, handleInputChange, selectedDate, setSelectedDate }) => {
+    const { Project1, setProject1 } = useCSVDataContext();
+    const advanceKey = advanceIndex === 1 ? 'firstAdvance' : 'secondAdvance';
+    return (
+        <>
+        <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={6}>
+                <TextField
                 fullWidth
-            />
-        </Grid>        
-      </Grid>
-
-      {Array.from({ length: 4 }, (_, index) => (
-        <Grid container spacing={2} key={index}>
-          <Grid item xs={12} sm={6} md={6}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label={`Installment ${index + 1}: Date`}
-                value={selectedDate}
-                onChange={(date) => setSelectedDate(date)}
-                renderInput={(params: any) => <TextField {...params} />}
+                label="Revenue Share %"
+                value={Project1[advanceKey].revenueShare || ''}
                 sx={{ marginBottom: '10px' }}
-              />
-            </LocalizationProvider>
-          </Grid>
+                onChange={(e) => handleInputChange(advanceIndex, 'revenueShare', e.target.value)}
+                />
+            </Grid>
 
-          <Grid item xs={12} sm={6} md={6}>
-            <CurrencyFormat
-              customInput={TextField}
-              label={`Installment ${index + 1}: Amount`}
-              value={inputs[`advanceAmount${index + 1}`] || ''}
-              onChange={(e) => handleInputChange(e, `advanceAmount${index + 1}`)}
-              thousandSeparator={true}
-              prefix="$"
-              decimalScale={2}
-              allowNegative={false}
-              displayType="input"
-              fullWidth
-            />
-          </Grid>
+            <Grid item xs={12} sm={6} md={6}>
+                <CurrencyFormat
+                    customInput={TextField}
+                    label="Recoup Amount"
+                    sx={{ marginBottom: '10px' }}
+                    value={Project1[advanceKey].recoupAmount || ''}
+                    // onChange={(e) => handleInputChange(advanceIndex, 'recoupAmount', e.target.value)}
+                    onValueChange={(values) => {
+                        const { value } = values; // extract value from values object
+                        handleInputChange(advanceIndex, 'recoupAmount', value); // pass the raw value to the handler
+                      }}                    
+                    thousandSeparator={true}
+                    prefix="$"
+                    decimalScale={2}
+                    allowNegative={false}
+                    displayType="input"
+                    fullWidth
+                />
+            </Grid>        
         </Grid>
-      ))}
-    </>
-  );
+
+        {Array.from({ length: 4 }, (_, index) => (
+            <Grid container spacing={2} key={index}>
+                <Grid item xs={12} sm={6} md={6}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                    label={`Installment ${index + 1}: Date`}
+                    value={selectedDate}
+                    onChange={(date) => setSelectedDate(date)}
+                    renderInput={(params: any) => <TextField {...params} />}
+                    sx={{ marginBottom: '10px' }}
+                    />
+                </LocalizationProvider>
+                </Grid>
+
+                <Grid item xs={12} sm={6} md={6}>
+                <CurrencyFormat
+                    customInput={TextField}
+                    label={`Installment ${index + 1}: Amount`}
+                    value={inputs[`advanceAmount${index + 1}`] || ''}
+                    onChange={(e) => handleInputChange(e, `advanceAmount${index + 1}`)}
+                    thousandSeparator={true}
+                    prefix="$"
+                    decimalScale={2}
+                    allowNegative={false}
+                    displayType="input"
+                    fullWidth
+                />
+                </Grid>
+            </Grid>
+        ))}
+        </>
+    );
 };
    
 const Project1Page = () => {
@@ -103,7 +110,37 @@ const Project1Page = () => {
             [field]: updatedValue
           };
         });
-      };
+    };
+
+    const handleAdvanceChange = (advanceIndex: number, field: keyof Advance, value: any) => {
+        setProject1(prev => {
+
+            console.log("handle advance change");
+
+            if (advanceIndex == 1) {
+                var currentAdvance = prev.firstAdvance;
+                var fieldName = 'firstAdvance';
+            } else {
+                var currentAdvance = prev.secondAdvance;
+                var fieldName = 'secondAdvance';
+            }
+
+            console.log(prev[fieldName]);            
+            
+    
+
+            const updatedAdvance = {
+                ...currentAdvance,
+                [field]: field.includes('Date') ? value : parseFloat(value)
+            };
+
+            console.log(updatedAdvance);
+    
+            // Return the updated Project1 object
+            return { ...prev, [fieldName]: updatedAdvance };
+        });
+    };
+    
 
     const handleSubmit = () => {
         // Handle form submission here
@@ -229,7 +266,8 @@ const Project1Page = () => {
                             
                             <AdvanceSection
                                 inputs={inputs}
-                                handleInputChange={handleInputChange}
+                                advanceIndex={1}
+                                handleInputChange={handleAdvanceChange}
                                 selectedDate={selectedDate}
                                 setSelectedDate={setSelectedDate}
                             />
@@ -242,7 +280,8 @@ const Project1Page = () => {
                             
                             <AdvanceSection
                                 inputs={inputs}
-                                handleInputChange={handleInputChange}
+                                advanceIndex={2}
+                                handleInputChange={handleAdvanceChange}
                                 selectedDate={selectedDate}
                                 setSelectedDate={setSelectedDate}
                             />

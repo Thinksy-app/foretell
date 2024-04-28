@@ -32,6 +32,8 @@ const defaultProject = {
     devCosts: 0,
     fixedCosts: 0,
     expectedLaunchDate: "",
+    firstAdvance: {revenueShare: 0},
+    secondAdvance: {revenueShare: 0},
 };
 
 const CSVDataContext = createContext({
