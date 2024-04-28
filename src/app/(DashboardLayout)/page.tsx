@@ -19,7 +19,7 @@ import { useState } from 'react';
 
 const Dashboard = () => {
   const [fileSelected, setFileSelected] = useState(false);
-  const { csvData, condensedCSVData } = useCSVDataContext();
+  const { csvData, condensedCSVData, Project1 } = useCSVDataContext();
     
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   return (
@@ -35,11 +35,11 @@ const Dashboard = () => {
 
 
           {!condensedCSVData || condensedCSVData.length === 0 && 
-            <Grid item xs={12} lg={4}>
-              <DashboardCard title="No Forecasts :(">
+            <Grid item xs={12} lg={6}>
+              <DashboardCard title="No forecasts :(">
                 <Box>
                   <Typography>
-                    Please upload your forecasts in the{' '}
+                    Please import your forecasts in the{' '}
                     <Link href="/forecasts" passHref>
                       forecasts tab
                     </Link>  in order to generate your pro-forma models
@@ -49,15 +49,15 @@ const Dashboard = () => {
             </Grid>          
           }
 
-          {!condensedCSVData || condensedCSVData.length === 0 && 
-            <Grid item xs={12} lg={4}>
-              <DashboardCard title="No Projects :(">
+          {Project1.expectedLaunchDate == '' && 
+            <Grid item xs={12} lg={6}>
+              <DashboardCard title="No projects :(">
                 <Box>
                   <Typography>
                     Please create at least {' '}
                     <Link href="/project-gotham" passHref>
                       one project
-                    </Link>  in order to generate your pro-forma models
+                    </Link>  in the projects tab in order to generate your pro-forma models
                   </Typography>
                 </Box>
               </DashboardCard>

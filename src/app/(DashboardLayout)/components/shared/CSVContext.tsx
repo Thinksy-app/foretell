@@ -1,12 +1,48 @@
 import React, { createContext, useContext, useState } from 'react';
+import TimeGrid from '../dashboard/TimeGrid';
 
 // const CSVDataContext = createContext([]);
+
+interface Advance {
+    amount: number;
+    date: string;
+    revenueShare: number;
+    recoupAmount: number;
+    installmentDate1: string;
+    installmentAmount1: number;
+    installmentDate2: string;
+    installmentAmount2: number;
+    installmentDate3: string;
+    installmentAmount3: number;
+    installmentDate4: string;
+    installmentAmount4: number;
+}
+  
+interface Project {
+    revenue: number;
+    variableCosts: number;
+    devCosts: number;
+    fixedCosts: number;    
+    expectedLaunchDate: string;
+    // firstAdvance: Advance;
+    // secondAdvance: Advance;
+}
+
+const defaultProject = {
+    revenue: 0,
+    variableCosts: 0,
+    devCosts: 0,
+    fixedCosts: 0,
+    expectedLaunchDate: ""
+};
 
 const CSVDataContext = createContext({
     csvData: [],
     setCSVData: () => {},
     condensedCSVData: [],
     setCondensedCSVData: () => {},
+    Project1: defaultProject,    
+    setProject1: () => {}
 });
   
 const condenseData = (tableData) => {
@@ -33,6 +69,7 @@ const condenseData = (tableData) => {
 export const CSVDataProvider = ({ children }) => {
     const [csvData, setCsvData] = useState<Array<Array<string>>>([]);
     const [condensedCSVData, setCondensedCSVData] = useState<Array<Array<string>>>([]);
+    const [Project1, setProject1] = useState<Project>(defaultProject);
 
     const setCSVData = (data) => {
         setCsvData(data);
@@ -40,7 +77,7 @@ export const CSVDataProvider = ({ children }) => {
     };
 
     return (
-        <CSVDataContext.Provider value={{ csvData, setCSVData, condensedCSVData, setCondensedCSVData }}>
+        <CSVDataContext.Provider value={{ csvData, setCSVData, condensedCSVData, setCondensedCSVData, Project1, setProject1 }}>
             {children}
         </CSVDataContext.Provider>
     );

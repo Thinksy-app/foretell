@@ -15,6 +15,7 @@ import DatePanel from "react-multi-date-picker/plugins/date_panel"
 import DatePickerHeader from "react-multi-date-picker/plugins/date_picker_header"
 import * as dayjs from 'dayjs'
 import CurrencyFormat from 'react-currency-format';
+import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
 
 interface Inputs {
     revenue?: any; // Use 'any' if you don't know the type of 'revenue', or specify a more precise type
@@ -101,9 +102,21 @@ const SamplePage = () => {
   const [showProjectTable, setShowProjectTable] = useState(false);
 
 
-  const handleInputChange = (e: any, inputName: any) => {
+  const handleInputChangePrev = (e: any, inputName: any) => {
     setInputs({ ...inputs, [inputName]: e.target.value });
   };
+
+    
+    const { Project1, setProject1 } = useCSVDataContext();  // Import and use your context
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: keyof typeof Project1) => {
+        const value = event.target.value;
+        setProject1(prev => ({
+            ...prev,
+            [field]: field.includes('Cost') || field === 'revenue' ? parseFloat(value.replace(/[^0-9.-]+/g, "")) : value
+        }));
+    };
+
 
   const handleSubmit = () => {
     // Handle form submission here
@@ -128,21 +141,23 @@ const SamplePage = () => {
     // Format the numbers as strings with commas for thousands separator
     const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
    
-    setInputs(prevInputs => ({
-       ...prevInputs,
-       'revenue': `$${formatNumber(revenue)}`,
-       'varCosts': `$${formatNumber(varCosts)}`,
-       'devCosts': `$${formatNumber(devCosts)}`,
-       'fixedCosts': `$${formatNumber(fixedCosts)}`,
-       'advanceAmount1': `$${formatNumber(advanceAmount1)}`,
-       'advanceRevenue1': advanceRevenue1.toString(),
-       'advanceAmount2': `$${formatNumber(advanceAmount2)}`,
-       'advanceRevenue2': advanceRevenue2.toString(),      
-    }));
+    // Update Project1 in context
+    setProject1({
+        ...Project1,
+        expectedLaunchDate: dayjs().add(Math.floor(Math.random() * 5), 'year'),
+        revenue,
+        devCosts,
+        variableCosts: varCosts,
+        fixedCosts,
+        advances: [
+        { name: 'Advance 1', amount: advanceAmount1, date: dayjs().add(Math.floor(Math.random() * 5), 'year') },
+        { name: 'Advance 2', amount: advanceAmount2, date: dayjs().add(Math.floor(Math.random() * 5), 'year') },
+        // If additional advances or details needed, modify or add here
+        ]
+    });
    
     setShowProjectTable(true);
-   };
-   
+   };   
 
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -172,28 +187,11 @@ const SamplePage = () => {
                             mt={1}
                             // alignItems="center"
                         >
-                            
-                            {/* <input
-                                    type="file"
-                                    accept=".csv"
-                                    style={{ display: 'none' }}
-                                    onChange={(e) => handleFileInputChange(e)}
-                                    ref={(input) => { fileInputRef.current = input; }}
-                                /> */}
-                                {/* <Button
-                                    variant="contained"
-                                    disableElevation
-                                    size="small"
-                                    color="primary"
-                                    onClick={() => fileInputRef.current.click()}
-                                >
-                                    Import Timing Grid CSV
-                                </Button>             */}
 
                                 <CurrencyFormat
                                     label="Revenue"
                                     customInput={TextField}
-                                    value={inputs.revenue || ''}
+                                    value={Project1.revenue || ''}
                                     onChange={(e: any) => handleInputChange(e, 'revenue')}
                                     thousandSeparator={true}
                                     prefix="$"
@@ -206,8 +204,8 @@ const SamplePage = () => {
                                 <CurrencyFormat
                                     customInput={TextField}
                                     label="Variable Costs"
-                                    value={inputs.varCosts || ''}
-                                    onChange={(e: any) => handleInputChange(e, 'varCosts')}
+                                    value={Project1.variableCosts || ''}
+                                    onChange={(e: any) => handleInputChange(e, 'variableCosts')}
                                     thousandSeparator={true}
                                     prefix="$"
                                     decimalScale={2}
@@ -219,7 +217,7 @@ const SamplePage = () => {
                                 <CurrencyFormat
                                     customInput={TextField}
                                     label="Development Cost"
-                                    value={inputs.devCosts || ''}
+                                    value={Project1.devCosts || ''}
                                     onChange={(e: any) => handleInputChange(e, 'devCosts')}
                                     thousandSeparator={true}
                                     prefix="$"
@@ -232,7 +230,7 @@ const SamplePage = () => {
                                 <CurrencyFormat
                                     customInput={TextField}
                                     label="Fixed Costs"
-                                    value={inputs.fixedCosts || ''}
+                                    value={Project1.fixedCosts || ''}
                                     onChange={(e: any) => handleInputChange(e, 'fixedCosts')}
                                     thousandSeparator={true}
                                     prefix="$"
@@ -247,7 +245,7 @@ const SamplePage = () => {
                                     <DatePicker1
                                         label="Expected Launch"
                                         value={selectedDate}
-                                        onChange={(date) => setSelectedDate(date)}
+                                        onChange={(date) => handleInputChange(e, 'expectedLaunchDate')}
                                         renderInput={(params: any) => <TextField {...params} />}
                                         sx={{ marginBottom: '10px' }}
                                     />

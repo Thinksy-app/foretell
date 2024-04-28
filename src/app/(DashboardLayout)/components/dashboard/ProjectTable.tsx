@@ -329,7 +329,7 @@ import {
 
     return (
       <DashboardCard
-        title="🦇 Gothem Knights - Profit & Losses"
+        title="Project 1 - Profit & Losses"
         action={
           <>
           <IconButton
