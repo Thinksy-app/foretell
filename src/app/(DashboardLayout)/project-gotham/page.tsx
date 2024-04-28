@@ -207,13 +207,13 @@ const Project1Page = () => {
 
 
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker1
+                                    {/* <DatePicker1
                                         label="Expected Launch"
                                         value={Project1.expectedLaunchDate}
                                         onChange={(date) => handleInputChange(e, 'expectedLaunchDate')}
                                         renderInput={(params: any) => <TextField {...params} />}
                                         sx={{ marginBottom: '10px' }}
-                                    />
+                                    /> */}
                                 </LocalizationProvider>
                             </Stack>
                             </Grid>
