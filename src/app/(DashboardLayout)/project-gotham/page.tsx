@@ -5,12 +5,11 @@ import PageContainer from '@/app/(DashboardLayout)/components/container/PageCont
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker as DatePicker1 } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import TempTable from '@/app/(DashboardLayout)/components/dashboard/TempTable';
 import ProjectTable from '../components/dashboard/ProjectTable';
 import CashBalance from '../components/dashboard/CashBalance';
 import TimeGrid from '../components/dashboard/TimeGrid';
-import DatePicker, { DateObject } from "react-multi-date-picker";
 import DatePanel from "react-multi-date-picker/plugins/date_panel" 
 import DatePickerHeader from "react-multi-date-picker/plugins/date_picker_header"
 import * as dayjs from 'dayjs'
@@ -51,7 +50,7 @@ const AdvanceSection = ({ inputs, handleInputChange, selectedDate, setSelectedDa
         <Grid container spacing={2} key={index}>
           <Grid item xs={12} sm={6} md={6}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker1
+              <DatePicker
                 label={`Installment ${index + 1}: Date`}
                 value={selectedDate}
                 onChange={(date) => setSelectedDate(date)}
@@ -91,13 +90,20 @@ const Project1Page = () => {
     const [showProjectTable, setShowProjectTable] = useState(false);
     const { Project1, setProject1 } = useCSVDataContext();  // Import and use your context
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: keyof typeof Project1) => {
-        const value = event.target.value;
-        setProject1(prev => ({
+    const handleInputChange = (value, field) => {
+        setProject1(prev => {
+          // Determine if the value is an event object (from an input field)
+          const finalValue = value?.target ? value.target.value : value;
+    
+          // Convert input value if necessary, handle date as a special case
+          const updatedValue = field === 'expectedLaunchDate' ? value : parseFloat(finalValue.replace(/[^0-9.-]+/g, ""));
+    
+          return {
             ...prev,
-            [field]: field.includes('Cost') || field === 'revenue' ? parseFloat(value.replace(/[^0-9.-]+/g, "")) : value
-        }));
-    };
+            [field]: updatedValue
+          };
+        });
+      };
 
     const handleSubmit = () => {
         // Handle form submission here
@@ -141,18 +147,16 @@ const Project1Page = () => {
             <Grid item xs={12} lg={12}>
                 <DashboardCard title="Projections">                    
                     <Grid container spacing={3}>
-
-                     <Grid item xs={12} lg={4}>
+                        <Grid item xs={12} lg={4}>
                             <Grid item xs={12}>
                                 <Typography variant="subtitle2" sx={{ padding: '14px' }}>General:</Typography>
-                            </Grid>                            
-                            <Stack
-                            direction={{ xs: "column", sm: "column" }}
-                            spacing={1}
-                            mt={1}
-                            // alignItems="center"
-                        >
+                            </Grid>
 
+                            <Stack
+                                direction={{ xs: "column", sm: "column" }}
+                                spacing={1}
+                                mt={1}
+                            >
                                 <CurrencyFormat
                                     label="Revenue"
                                     customInput={TextField}
@@ -207,16 +211,16 @@ const Project1Page = () => {
 
 
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    {/* <DatePicker1
+                                    <DatePicker
                                         label="Expected Launch"
-                                        value={Project1.expectedLaunchDate}
-                                        onChange={(date) => handleInputChange(e, 'expectedLaunchDate')}
+                                        value={Project1.expectedLaunchDate ? dayjs(Project1.expectedLaunchDate) : null}
+                                        onChange={(newDate) => handleInputChange(newDate, 'expectedLaunchDate')}
                                         renderInput={(params: any) => <TextField {...params} />}
                                         sx={{ marginBottom: '10px' }}
-                                    /> */}
+                                    />
                                 </LocalizationProvider>
                             </Stack>
-                            </Grid>
+                        </Grid>
                         
                         <Grid item xs={12} lg={4}>
                             <Grid item xs={12}>
