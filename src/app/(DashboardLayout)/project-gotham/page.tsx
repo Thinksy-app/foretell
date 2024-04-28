@@ -372,12 +372,12 @@ const Project1Page = () => {
 
             {/* Project Forecasts */}
             <Grid item xs={12} lg={12}>
-                {showProjectTable && <ProjectTable inputs={inputs} calVals={[valuesCal1, valuesCal2, valuesCal3, valuesCal4]} startDate={selectedDate} key={Date.now()}/>}
+                {showProjectTable && <ProjectTable inputs={inputs} calVals={[valuesCal1, valuesCal2, valuesCal3, valuesCal4]} startDate={Project1.expectedLaunchDate} key={Date.now()}/>}
             </Grid>
 
             {/* Cash Balance */}
             <Grid item xs={12} lg={12}>
-                {showProjectTable && <CashBalance startDate={selectedDate} inputs={inputs} key={Date.now()}/>}
+                {showProjectTable && <CashBalance startDate={Project1.expectedLaunchDate} inputs={inputs} key={Date.now()}/>}
             </Grid>
         </Grid> 
     </PageContainer>

@@ -88,6 +88,11 @@ import { start } from "repl";
                 <TableRow>
                     <TableCell></TableCell>
                     {generateTableCells(startDate)}
+                    <TableCell align="right">
+                    <Typography variant="subtitle2" fontWeight={800}>
+                    Total
+                    </Typography>
+                </TableCell>                       
                 </TableRow>
                 <TableRow>
                 <TableCell sx={{ position: 'sticky', left: 0, zIndex: 2, backgroundColor: 'white'}}>
@@ -103,11 +108,7 @@ import { start } from "repl";
                     </TableCell>
                 ))}
 
-                <TableCell align="right">
-                    <Typography variant="subtitle2" fontWeight={800}>
-                    Total
-                    </Typography>
-                </TableCell>                                                                                                                                                               
+                                                                                                                                                            
                 </TableRow>             
               </TableHead>
 

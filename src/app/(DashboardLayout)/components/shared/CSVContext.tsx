@@ -15,6 +15,55 @@ interface Advance {
     installmentDate4?: string;
     installmentAmount4?: number;
 }
+
+interface MonthlySpending {
+    revenuePercent: number;
+    developmentcostsPercent: number;
+    marketingexpensesPercent: number;
+}
+
+interface TimeGrid {
+    [index: number]: MonthlySpending;
+}
+
+let defaultExtendedTimeGrid: TimeGrid = {
+    0: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    1: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    2: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    3: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    4: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    5: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    6: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    7: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    8: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    9: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    10: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    11: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    12: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    13: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    14: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    15: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    16: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    17: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    18: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    19: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    20: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    21: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    22: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 0 },
+    23: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 40 },
+    24: { revenuePercent: 0, developmentcostsPercent: 4, marketingexpensesPercent: 50 },
+    25: { revenuePercent: 40, developmentcostsPercent: 0, marketingexpensesPercent: 10 },
+    26: { revenuePercent: 30, developmentcostsPercent: 0, marketingexpensesPercent: 0 },
+    27: { revenuePercent: 20, developmentcostsPercent: 0, marketingexpensesPercent: 0 },
+    28: { revenuePercent: 10, developmentcostsPercent: 0, marketingexpensesPercent: 0 },
+    29: { revenuePercent: 0, developmentcostsPercent: 0, marketingexpensesPercent: 0 },
+    30: { revenuePercent: 0, developmentcostsPercent: 0, marketingexpensesPercent: 0 },
+    31: { revenuePercent: 0, developmentcostsPercent: 0, marketingexpensesPercent: 0 },
+    32: { revenuePercent: 0, developmentcostsPercent: 0, marketingexpensesPercent: 0 },
+    33: { revenuePercent: 0, developmentcostsPercent: 0, marketingexpensesPercent: 0 },
+    34: { revenuePercent: 0, developmentcostsPercent: 0, marketingexpensesPercent: 0 },
+    35: { revenuePercent: 0, developmentcostsPercent: 0, marketingexpensesPercent: 0 },
+};
   
 interface Project {
     revenue: number;
@@ -42,7 +91,8 @@ const CSVDataContext = createContext({
     condensedCSVData: [],
     setCondensedCSVData: () => {},
     Project1: defaultProject,    
-    setProject1: (project: Project) => {}
+    setProject1: (project: Project) => {},
+    extendedTimeGrid: defaultExtendedTimeGrid
 });
   
 const condenseData = (tableData) => {
@@ -70,6 +120,7 @@ export const CSVDataProvider = ({ children }) => {
     const [csvData, setCsvData] = useState<Array<Array<string>>>([]);
     const [condensedCSVData, setCondensedCSVData] = useState<Array<Array<string>>>([]);
     const [Project1, setProject1] = useState<Project>(defaultProject);
+    const [extendedTimeGrid, setExtendedTimeGrid] = useState(defaultExtendedTimeGrid); 
 
     const setCSVData = (data) => {
         setCsvData(data);
@@ -77,7 +128,7 @@ export const CSVDataProvider = ({ children }) => {
     };
 
     return (
-        <CSVDataContext.Provider value={{ csvData, setCSVData, condensedCSVData, setCondensedCSVData, Project1, setProject1 }}>
+        <CSVDataContext.Provider value={{ csvData, setCSVData, condensedCSVData, setCondensedCSVData, Project1, setProject1, extendedTimeGrid }}>
             {children}
         </CSVDataContext.Provider>
     );
