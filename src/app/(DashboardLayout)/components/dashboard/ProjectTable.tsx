@@ -327,19 +327,24 @@ import * as dayjs from 'dayjs'
       '-- Other': 'marketingexpensesPercent'
     }
 
-    const getAdvanceTotal = (index, advance) => {
-      var currentDate = new Date(Project1.expectedLaunchDate);
-      currentDate.setMonth(currentDate.getMonth() - 25 + index);
+    const getAdvanceTotal = (index, advance, totalRevenue) => {
 
-      var total = 0;
-      if (advance.installmentDate1 && isSameMonthAndYear(currentDate, advance.installmentDate1)) {
-        total = advance.installmentAmount1;
-      } else if (advance.installmentDate2 && isSameMonthAndYear(currentDate, advance.installmentDate2)) {
-        total = advance.installmentAmount2;
-      } else if (advance.installmentDate3 && isSameMonthAndYear(currentDate, advance.installmentDate3)) {
-        total = advance.installmentAmount3;
-      } else if (advance.installmentDate4 && isSameMonthAndYear(currentDate, advance.installmentDate4)) {
-        total = advance.installmentAmount4;
+      if (index <= 25) {
+        var currentDate = new Date(Project1.expectedLaunchDate);
+        currentDate.setMonth(currentDate.getMonth() - 25 + index);
+  
+        var total = 0;
+        if (advance.installmentDate1 && isSameMonthAndYear(currentDate, advance.installmentDate1)) {
+          total = advance.installmentAmount1;
+        } else if (advance.installmentDate2 && isSameMonthAndYear(currentDate, advance.installmentDate2)) {
+          total = advance.installmentAmount2;
+        } else if (advance.installmentDate3 && isSameMonthAndYear(currentDate, advance.installmentDate3)) {
+          total = advance.installmentAmount3;
+        } else if (advance.installmentDate4 && isSameMonthAndYear(currentDate, advance.installmentDate4)) {
+          total = advance.installmentAmount4;
+        }
+      } else {
+        var total = advance.revenueShare / 100 * totalRevenue * -1;
       }
 
       return total;
@@ -367,10 +372,13 @@ import * as dayjs from 'dayjs'
           total = extendedTimeGrid[index].marketingexpensesPercent / 100 * Project1.fixedCosts * -1;               
           break;
         case "Advance #1":
-          total = getAdvanceTotal(index, Project1.firstAdvance);
+          var totalRev = extendedTimeGrid[index].revenuePercent / 100 * Project1.revenue;
+          total = getAdvanceTotal(index, Project1.firstAdvance, totalRev);
           break;
         case "Advance #2":
-          total = getAdvanceTotal(index, Project1.secondAdvance);
+          var totalRev = extendedTimeGrid[index].revenuePercent / 100 * Project1.revenue;
+          var revenueAfterAdvance1 = totalRev - getAdvanceTotal(index, Project1.firstAdvance, totalRev);
+          total = getAdvanceTotal(index, Project1.secondAdvance, revenueAfterAdvance1);
           break;          
         case "Contribution Profit":
           var revTotal = extendedTimeGrid[index].revenuePercent / 100 * Project1.revenue;
