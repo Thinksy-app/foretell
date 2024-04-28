@@ -62,7 +62,7 @@ const Dashboard = () => {
                 </Box>
               </DashboardCard>
             </Grid>          
-          }          
+          }
           
           <Grid item xs={12} lg={12}>
             {condensedCSVData && condensedCSVData.length > 0 && <CSVTable tableData={condensedCSVData} />}
