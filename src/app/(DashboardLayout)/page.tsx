@@ -36,10 +36,10 @@ const Dashboard = () => {
 
           {!condensedCSVData || condensedCSVData.length === 0 && 
             <Grid item xs={12} lg={4}>
-              <DashboardCard title="No Data :(">
+              <DashboardCard title="No Forecasts :(">
                 <Box>
                   <Typography>
-                    Please upload your client's forecasts in the{' '}
+                    Please upload your forecasts in the{' '}
                     <Link href="/forecasts" passHref>
                       forecasts tab
                     </Link>  in order to generate your pro-forma models
@@ -48,6 +48,21 @@ const Dashboard = () => {
               </DashboardCard>
             </Grid>          
           }
+
+          {!condensedCSVData || condensedCSVData.length === 0 && 
+            <Grid item xs={12} lg={4}>
+              <DashboardCard title="No Projects :(">
+                <Box>
+                  <Typography>
+                    Please create at least {' '}
+                    <Link href="/project-gotham" passHref>
+                      one project
+                    </Link>  in order to generate your pro-forma models
+                  </Typography>
+                </Box>
+              </DashboardCard>
+            </Grid>          
+          }          
           
           <Grid item xs={12} lg={12}>
             {condensedCSVData && condensedCSVData.length > 0 && <CSVTable tableData={condensedCSVData} />}

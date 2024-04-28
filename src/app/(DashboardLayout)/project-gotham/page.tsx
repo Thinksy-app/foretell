@@ -24,7 +24,73 @@ interface Inputs {
 interface CashBalanceProps {
     startDate: string;
     inputs: Inputs;
-   }
+}
+   
+   
+const AdvanceSection = ({ inputs, handleInputChange, selectedDate, setSelectedDate }) => {
+  return (
+    <>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={6}>
+          <TextField
+            fullWidth
+            label="Revenue Share %"
+            value={inputs.advanceRevenue1 || ''}
+            sx={{ marginBottom: '10px' }}
+            onChange={(e) => handleInputChange(e, 'advanceRevenue1')}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={6}>
+            <CurrencyFormat
+                customInput={TextField}
+                label="Recoup Amount"
+                sx={{ marginBottom: '10px' }}
+                value={inputs.advanceAmount1 || ''}
+                onChange={(e) => handleInputChange(e, 'advanceAmount1')}
+                thousandSeparator={true}
+                prefix="$"
+                decimalScale={2}
+                allowNegative={false}
+                displayType="input"
+                fullWidth
+            />
+        </Grid>        
+      </Grid>
+
+      {Array.from({ length: 4 }, (_, index) => (
+        <Grid container spacing={2} key={index}>
+          <Grid item xs={12} sm={6} md={6}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker1
+                label={`Installment ${index + 1}: Date`}
+                value={selectedDate}
+                onChange={(date) => setSelectedDate(date)}
+                renderInput={(params: any) => <TextField {...params} />}
+                sx={{ marginBottom: '10px' }}
+              />
+            </LocalizationProvider>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={6}>
+            <CurrencyFormat
+              customInput={TextField}
+              label={`Installment ${index + 1}: Amount`}
+              value={inputs[`advanceAmount${index + 1}`] || ''}
+              onChange={(e) => handleInputChange(e, `advanceAmount${index + 1}`)}
+              thousandSeparator={true}
+              prefix="$"
+              decimalScale={2}
+              allowNegative={false}
+              displayType="input"
+              fullWidth
+            />
+          </Grid>
+        </Grid>
+      ))}
+    </>
+  );
+};
+
    
 const SamplePage = () => {
   const [inputs, setInputs] = useState({});
@@ -58,10 +124,6 @@ const SamplePage = () => {
     const advanceRevenue1 = Math.floor(Math.random() * 10); // Random number between 0 and 10
     const advanceAmount2 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
     const advanceRevenue2 = Math.floor(Math.random() * 10); // Random number between 0 and 10    
-    const advanceAmount3 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const advanceRevenue3 = Math.floor(Math.random() * 10); // Random number between 0 and 10        
-    const advanceAmount4 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const advanceRevenue4 = Math.floor(Math.random() * 10); // Random number between 0 and 10            
    
     // Format the numbers as strings with commas for thousands separator
     const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -76,10 +138,6 @@ const SamplePage = () => {
        'advanceRevenue1': advanceRevenue1.toString(),
        'advanceAmount2': `$${formatNumber(advanceAmount2)}`,
        'advanceRevenue2': advanceRevenue2.toString(),      
-       'advanceAmount3': `$${formatNumber(advanceAmount3)}`,
-       'advanceRevenue3': advanceRevenue3.toString(),       
-       'advanceAmount4': `$${formatNumber(advanceAmount4)}`,
-       'advanceRevenue4': advanceRevenue4.toString(),              
     }));
    
     setShowProjectTable(true);
@@ -101,9 +159,13 @@ const SamplePage = () => {
             </Grid>     
 
             <Grid item xs={12} lg={12}>           
-                <DashboardCard title="Projections">
+                <DashboardCard title="Projections">                    
                     <Grid container spacing={3}>
-                        <Grid item xs={12} lg={6}>
+
+                     <Grid item xs={12} lg={4}>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle2" sx={{ padding: '14px' }}>General:</Typography>
+                            </Grid>                            
                             <Stack
                             direction={{ xs: "column", sm: "column" }}
                             spacing={1}
@@ -191,178 +253,35 @@ const SamplePage = () => {
                                     />
                                 </LocalizationProvider>
                             </Stack>
+                            </Grid>
+                        
+                        <Grid item xs={12} lg={4}>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle2" sx={{ padding: '14px' }}>Advance #1:</Typography>
+                            </Grid>                            
                             
-                        </Grid>           
-
-
-
-                        <Grid item xs={12} lg={6}>
-                            <Typography variant="h6" sx={{ padding: '14px' }}>Advances:</Typography>       
-
-                            <Stack
-                            direction={{ xs: "column", sm: "row" }}
-                            spacing={1}
-                            mt={1}
-                            // alignItems="center"
-                            >
-                                <CurrencyFormat
-                                    customInput={TextField}
-                                    label="Amount"
-                                    value={inputs.advanceAmount1 || ''}
-                                    onChange={(e) => handleInputChange(e, 'advanceAmount1')}
-                                    thousandSeparator={true}
-                                    prefix="$"
-                                    decimalScale={2}
-                                    allowNegative={false}
-                                    displayType="input"
-                                    sx={{ marginBottom: '10px', marginTop: '10px' }}
-                                />
-
-                                <TextField
-                                    label="Revenue Share %"
-                                    value={inputs.advanceRevenue1 || ''}
-                                    onChange={(e) => handleInputChange(e, 'advanceRevenue1')}
-                                    sx={{ marginBottom: '10px' }}
-                                />
-
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker
-                                        multiple
-                                        value={valuesCal1}
-                                        onChange={setCal1}
-                                        // value={inputs.advanceCalendarDates1}
-                                        // onChange={(e) => handleInputChangeCalendar(e, 'advanceCalendarDates1')}
-                                        placeholder='Installments'
-                                        style={{ padding: '25px', fontFamily: 'inherit', fontSize: 'inherit' }}
-                                        plugins={[
-                                            <DatePanel sort="date" />,
-                                        ]}   
-                                    />
-                                </LocalizationProvider>               
-                            </Stack>
-
-                            <Stack
-                            direction={{ xs: "column", sm: "row" }}
-                            spacing={1}
-                            mt={1}
-                            // alignItems="center"
-                            >
-                                <CurrencyFormat
-                                    customInput={TextField}
-                                    label="Amount"
-                                    value={inputs.advanceAmount2 || ''}
-                                    onChange={(e) => handleInputChange(e, 'advanceAmount2')}
-                                    thousandSeparator={true}
-                                    prefix="$"
-                                    decimalScale={2}
-                                    allowNegative={false}
-                                    displayType="input"
-                                    sx={{ marginBottom: '10px', marginTop: '10px' }}
-                                />                            
-
-                                <TextField
-                                    label="Revenue Share %"
-                                    value={inputs.advanceRevenue2 || ''}
-                                    onChange={(e) => handleInputChange(e, 'advanceRevenue2')}
-                                    sx={{ marginBottom: '10px' }}
-                                />
-
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker
-                                        multiple
-                                        value={valuesCal2}
-                                        onChange={setCal2}
-                                        placeholder='Installments'
-                                        style={{ padding: '25px', fontFamily: 'inherit', fontSize: 'inherit' }}
-                                        plugins={[
-                                            <DatePanel sort="date" />,
-                                        ]}   
-                                    />
-                                </LocalizationProvider>               
-                            </Stack>
-
-                            <Stack
-                            direction={{ xs: "column", sm: "row" }}
-                            spacing={1}
-                            mt={1}
-                            // alignItems="center"
-                            >
-                                <CurrencyFormat
-                                    customInput={TextField}
-                                    label="Amount"
-                                    value={inputs.advanceAmount3 || ''}
-                                    onChange={(e) => handleInputChange(e, 'advanceAmount3')}
-                                    thousandSeparator={true}
-                                    prefix="$"
-                                    decimalScale={2}
-                                    allowNegative={false}
-                                    displayType="input"
-                                    sx={{ marginBottom: '10px', marginTop: '10px' }}
-                                /> 
-                                
-                                <TextField
-                                    label="Revenue Share %"
-                                    value={inputs.advanceRevenue3 || ''}
-                                    onChange={(e) => handleInputChange(e, 'advanceRevenue3')}
-                                    sx={{ marginBottom: '10px' }}
-                                />
-
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker
-                                        multiple
-                                        value={valuesCal3}
-                                        onChange={setCal3}
-                                        placeholder='Installments'
-                                        style={{ padding: '25px', fontFamily: 'inherit', fontSize: 'inherit' }}
-                                        plugins={[
-                                            <DatePanel sort="date" />,
-                                        ]}                                    
-                                    />
-                                </LocalizationProvider>               
-                            </Stack>
-
-                            <Stack
-                            direction={{ xs: "column", sm: "row" }}
-                            spacing={1}
-                            mt={1}
-                            // alignItems="center"
-                            >
-                                <CurrencyFormat
-                                    customInput={TextField}
-                                    label="Amount"
-                                    value={inputs.advanceAmount4 || ''}
-                                    onChange={(e) => handleInputChange(e, 'advanceAmount4')}
-                                    thousandSeparator={true}
-                                    prefix="$"
-                                    decimalScale={2}
-                                    allowNegative={false}
-                                    displayType="input"
-                                    sx={{ marginBottom: '10px', marginTop: '10px' }}
-                                /> 
-
-                                <TextField
-                                    label="Revenue Share %"
-                                    value={inputs.advanceRevenue4 || ''}
-                                    onChange={(e) => handleInputChange(e, 'advanceRevenue4')}
-                                    sx={{ marginBottom: '10px', marginTop: '10px' }}
-                                />
-
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker
-                                        multiple
-                                        value={valuesCal4}
-                                        onChange={setCal4}
-                                        placeholder='Installments'
-                                        style={{ padding: '25px', fontFamily: 'inherit', fontSize: 'inherit' }}
-                                        plugins={[
-                                            <DatePanel sort="date" />,
-                                        ]}   
-                                    />
-                                </LocalizationProvider>               
-                            </Stack>                                
+                            <AdvanceSection
+                                inputs={inputs}
+                                handleInputChange={handleInputChange}
+                                selectedDate={selectedDate}
+                                setSelectedDate={setSelectedDate}
+                            />
                             
-                        </Grid>                  
+                        </Grid>    
+                        <Grid item xs={12} lg={4}>
 
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle2" sx={{ padding: '14px' }}>Advance #2:</Typography>
+                            </Grid>                                                        
+                            
+                            <AdvanceSection
+                                inputs={inputs}
+                                handleInputChange={handleInputChange}
+                                selectedDate={selectedDate}
+                                setSelectedDate={setSelectedDate}
+                            />
+                            
+                        </Grid>                                                                            
 
                         <Grid item xs={12} lg={12}>
                             <Button size="large" variant="contained" color="primary" onClick={handleSubmit}>
@@ -371,9 +290,8 @@ const SamplePage = () => {
                             <Button style={{ marginLeft: '10px'}} size="large" variant="contained" color="error" onClick={handleRandomize}>
                                 Randomize 🎲
                             </Button>                             
-                        </Grid>                    
-
-                    </Grid>
+                        </Grid>   
+                    </Grid>                         
                 </DashboardCard>
             </Grid>
 
