@@ -111,34 +111,7 @@ import { start } from "repl";
                 </TableRow>             
               </TableHead>
 
-              <EditableTableBody theme={theme} products={products}></EditableTableBody>
-              {/* <TableBody>             
-
-                
-                {products.map((product) => (
-                  <TableRow key={product.pname}>
-                        <TableCell sx={{ position: 'sticky', left: 0, zIndex: 2, backgroundColor: 'white' }}>
-                        <Typography color="textSecondary" variant="subtitle2" fontWeight={600}>
-                            {product.pname}
-                        </Typography>
-                        </TableCell>                    
-                        {product.data && product.data.map((value, i) => (
-                        <TableCell
-                        align="right"
-                        key={i}
-                        style={{
-                            backgroundColor: i === 25 ? theme.palette.warning.main : (i === 36 && value !== 1) ? theme.palette.error.main : 'inherit'
-                        }}
-                        >
-                            <Typography variant="subtitle2">
-                           {value.toLocaleString(undefined, { style: 'percent' })}
-
-                            </Typography>
-                        </TableCell>
-                        ))}
-                  </TableRow>
-                ))}
-              </TableBody> */}
+              <EditableTableBody theme={theme} products={products}/>
             </Table>
           </Box>
         </Box>

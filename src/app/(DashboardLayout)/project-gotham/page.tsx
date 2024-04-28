@@ -192,7 +192,7 @@ const Project1Page = () => {
         // Function to generate random installment data
         const randomInstallment = () => ({
             date: dayjs().add(Math.floor(Math.random() * 5), 'year'),
-            amount: Math.floor(Math.random() * 100000)
+            amount: Math.floor(Math.random() * 1000000)
         });
 
         const firstAdvance = {
@@ -367,7 +367,7 @@ const Project1Page = () => {
 
             {/* Time Grid */}
             <Grid item xs={12} lg={12}>
-                {showProjectTable && <TimeGrid key={Date.now()} startDate={selectedDate}/>}
+                {showProjectTable && <TimeGrid key={Date.now()} startDate={Project1.expectedLaunchDate}/>}
             </Grid>
 
             {/* Project Forecasts */}

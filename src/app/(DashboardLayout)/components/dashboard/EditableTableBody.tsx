@@ -31,7 +31,7 @@ const EditableTableBody = ({ theme, products }) => {
               align="right"
               key={cellIndex}
               style={{
-                backgroundColor: cellIndex === 24 ? theme.palette.warning.main : (cellIndex === 36 && value !== 1) ? theme.palette.error.main : 'inherit'
+                backgroundColor: cellIndex === 25 ? theme.palette.warning.main : (cellIndex === 36 && value !== 1) ? theme.palette.error.main : 'inherit'
               }}
             >
               <TextField
