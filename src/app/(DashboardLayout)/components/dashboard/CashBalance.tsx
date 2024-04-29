@@ -16,6 +16,7 @@ import {
   import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
 import { start } from "repl";
 import * as dayjs from 'dayjs'
+import { result } from "lodash";
 
   const generateTableCells = (startDate: any) => {
     const theme = useTheme();
@@ -37,44 +38,51 @@ import * as dayjs from 'dayjs'
 
   const isSameMonthAndYear = (dateStr1, dateStr2) => {
     const date1 = dayjs(dateStr1);
+    console.log("date 1: " + date1);
     const date2 = dayjs(dateStr2);
+    console.log("date 2: " + date2);
     return date1.isSame(date2, 'month') && date1.isSame(date2, 'year');
 };    
   
 
-  const createCashBalanceRow = (condensedData, startingCashBalance, startDate = "04/2025") => {
+  const createCashBalanceRow = (startingCashBalance, startDate) => {
+    const { condensedCSVData } = useCSVDataContext();
     // Find the index of the date in the header row
     console.log("Condensed Data: ");
-    console.log(condensedData);
-    const headerRow = condensedData[0]; // assuming the first row is your header
+    console.log(condensedCSVData);
+    const headerRow = condensedCSVData[0]; // assuming the first row is your header
   
+    console.log("start date: " + startDate);
+    console.log(headerRow);
     const startIndex = headerRow.findIndex(date => {
       return isSameMonthAndYear(startDate, date);
     });  
 
     if (startIndex === -1) {
+        console.log('Start date not found in the header');
         console.error('Start date not found in the header');
         return [];
     }
   
-    let cashBalanceRow = [];
-    let runningCashBalance = startingCashBalance;
+    let resultRow = [];
   
     // Assuming 'Net Profit' is one of the rows, find that row
-    const netProfitRow = condensedData.find(row => row[0] === "Cash Balance");
-    if (!netProfitRow) {
-        console.error('Net Profit row not found');
+    const cashBalanceRow = condensedCSVData.find(row => row[0] === "Cash Balance");
+    if (!cashBalanceRow) {
+        console.error('Cash balance not found');
         return [];
     }
   
     // Calculate the cash balance from the start date forward
-    for (let i = startIndex; i < netProfitRow.length; i++) {
-        const netProfitValue = parseFloat(netProfitRow[i].replace(/[$,]/g, '')) || 0;
-        runningCashBalance += netProfitValue;
-        cashBalanceRow.push(runningCashBalance.toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2}));
+    for (let i = startIndex; i < cashBalanceRow.length; i++) {
+        const cashBalanceValue = parseFloat(cashBalanceRow[i].replace(/[$,]/g, '')) || 0;
+        resultRow.push(cashBalanceValue.toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2}));
     }
   
-    return cashBalanceRow;
+    console.log("resultRow");
+    console.log(resultRow);
+
+    return resultRow;
   };
 
   const CashBalance: React.FC<{ startDate: any; title: any, projNumber: number }> = ({ startDate, title, projNumber }) => {
@@ -83,10 +91,12 @@ import * as dayjs from 'dayjs'
     const categories = ['Contribution Profit', 'Cash Balance'];        
     const { Project1, Project2, Project3, extendedTimeGrid, condensedCSVData, startingCashBalance } = useCSVDataContext();
 
+
     
     const currentDate = new Date(startDate);
     currentDate.setMonth(currentDate.getMonth() - 25);
-    const cashBalance = createCashBalanceRow(condensedCSVData, startingCashBalance, currentDate);
+    console.log("init start date: " + currentDate);
+    const cashBalance = createCashBalanceRow(startingCashBalance, currentDate);
 
     const whichProject = (projNumber) => {
       if (projNumber == 1) {
@@ -114,6 +124,7 @@ import * as dayjs from 'dayjs'
     }
 
     const calculateTotalNum = (index, category, cashBalance) => {
+      const { Project1, Project2, Project3, extendedTimeGrid, condensedCSVData, startingCashBalance } = useCSVDataContext();
       var total = 0;
       var revTotal = extendedTimeGrid[index].revenuePercent / 100 * currentProject.revenue;
       var variableTotal = 100 / 36 / 100 * currentProject.variableCosts; // Please double-check this formula as it seems to be incorrect or based on a specific assumption
@@ -126,6 +137,8 @@ import * as dayjs from 'dayjs'
               total = profitTotal;
               break;
           case "Cash Balance":
+              console.log("Cash balance at caluclation:" + cashBalance.length);
+
               if (cashBalance.length > index) {
                   // Initialize the cumulative cash balance from the previous month or starting balance
                   const previousCashBalance = index > 0 

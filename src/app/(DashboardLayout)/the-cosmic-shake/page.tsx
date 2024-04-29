@@ -182,7 +182,7 @@ const Project2Page = () => {
 
     const handleRandomize = () => {
         // Generate random numbers for each input
-        const expectedLaunchDate = dayjs().add(Math.floor(Math.random() * 5), 'year'); // Random date 5 years from now
+        const expectedLaunchDate = dayjs().add(3 + Math.floor(Math.random() * 4), 'year');
         const revenue = Math.floor(Math.random() * 100000000); // Random number between 0 and 100,000,000
         const varCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
         const devCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
