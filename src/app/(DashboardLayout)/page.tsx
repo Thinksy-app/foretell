@@ -13,13 +13,14 @@ import ProductSales from '@/app/(DashboardLayout)/components/dashboard/ProductSa
 import { IconQuestionMark, IconMenu } from "@tabler/icons-react";
 import React, { useRef } from 'react';
 import CSVTable from '@/app/(DashboardLayout)/components/dashboard/CSVTable';
+import CashBalance from '@/app/(DashboardLayout)/components/dashboard/CashBalance';
 import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
 
 import { useState } from 'react';
 
 const Dashboard = () => {
   const [fileSelected, setFileSelected] = useState(false);
-  const { csvData, condensedCSVData, Project1 } = useCSVDataContext();
+  const { csvData, condensedCSVData, Project1, Project2, Project3 } = useCSVDataContext();
     
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   return (
@@ -63,6 +64,14 @@ const Dashboard = () => {
               </DashboardCard>
             </Grid>          
           }
+
+          <Grid item xs={12} lg={12}>
+            {Project1.expectedLaunchDate && <CashBalance projNumber={1} title="Project 1: Cash Balance" startDate={Project1.expectedLaunchDate} />}
+          </Grid>
+
+          <Grid item xs={12} lg={12}>
+            {Project2.expectedLaunchDate && <CashBalance projNumber={2} title="Project 2: Cash Balance" startDate={Project2.expectedLaunchDate} />}
+          </Grid>          
           
           <Grid item xs={12} lg={12}>
             {condensedCSVData && condensedCSVData.length > 0 && <CSVTable tableData={condensedCSVData} />}

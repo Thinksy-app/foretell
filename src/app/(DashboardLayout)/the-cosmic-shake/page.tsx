@@ -5,399 +5,383 @@ import PageContainer from '@/app/(DashboardLayout)/components/container/PageCont
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker as DatePicker1 } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import TempTable from '@/app/(DashboardLayout)/components/dashboard/TempTable';
 import ProjectTable from '../components/dashboard/ProjectTable';
 import CashBalance from '../components/dashboard/CashBalance';
 import TimeGrid from '../components/dashboard/TimeGrid';
-import DatePicker, { DateObject } from "react-multi-date-picker";
 import DatePanel from "react-multi-date-picker/plugins/date_panel" 
 import DatePickerHeader from "react-multi-date-picker/plugins/date_picker_header"
 import * as dayjs from 'dayjs'
 import CurrencyFormat from 'react-currency-format';
+import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
 
-interface Inputs {
-    revenue?: any; // Use 'any' if you don't know the type of 'revenue', or specify a more precise type
-    // Add other properties as needed
-}
-
-interface CashBalanceProps {
-    startDate: string;
-    inputs: Inputs;
-   }
-   
-const TheCosmicShake = () => {
-  const [inputs, setInputs] = useState({});
-  const [valuesCal1, setCal1] = useState([])
-  const [valuesCal2, setCal2] = useState([])
-  const [valuesCal3, setCal3] = useState([])
-  const [valuesCal4, setCal4] = useState([])
-  const [showProjectTable, setShowProjectTable] = useState(false);
-
-
-  const handleInputChange = (e: any, inputName: any) => {
-    setInputs({ ...inputs, [inputName]: e.target.value });
+const InstallmentInputs = ({ Project2, setProject2, advanceKey }) => {
+    const handleDateChange = (date, installmentIndex) => {
+      setProject2(prev => ({
+        ...prev,
+        [advanceKey]: {
+          ...prev[advanceKey],
+          [`installmentDate${installmentIndex + 1}`]: date
+        }
+      }));
+    };
+  
+    const handleAmountChange = (value, installmentIndex) => {
+      setProject2(prev => ({
+        ...prev,
+        [advanceKey]: {
+          ...prev[advanceKey],
+          [`installmentAmount${installmentIndex + 1}`]: parseFloat(value.replace(/[^0-9.-]+/g, ""))
+        }
+      }));
+    };
+  
+    return (
+      <>
+        {Array.from({ length: 4 }, (_, index) => (
+          <Grid container spacing={2} key={index}>
+            <Grid item xs={12} sm={6} md={6}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label={`Installment ${index + 1}: Date`}
+                  value={Project2[advanceKey][`installmentDate${index + 1}`]}
+                  onChange={(date) => handleDateChange(date, index)}
+                  renderInput={(params) => <TextField {...params} />}
+                  sx={{ marginBottom: '10px' }}
+                />
+              </LocalizationProvider>
+            </Grid>
+  
+            <Grid item xs={12} sm={6} md={6}>
+              <CurrencyFormat
+                customInput={TextField}
+                label={`Installment ${index + 1}: Amount`}
+                value={Project2[advanceKey][`installmentAmount${index + 1}`] || ''}
+                onChange={(e) => handleAmountChange(e.target.value, index)}
+                thousandSeparator={true}
+                prefix="$"
+                decimalScale={2}
+                allowNegative={false}
+                displayType="input"
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+        ))}
+      </>
+    );
   };
+   
+const AdvanceSection = ({ advanceIndex, inputs, handleInputChange, selectedDate, setSelectedDate }) => {
+    const { Project2, setProject2 } = useCSVDataContext();
+    const advanceKey = advanceIndex === 1 ? 'firstAdvance' : 'secondAdvance';
 
-  const handleSubmit = () => {
-    // Handle form submission here
-    setShowProjectTable(true);
-    console.log('Form submitted:', inputs);
-  };
+    return (
+        <>
+        <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={6}>
+                <TextField
+                fullWidth
+                label="Revenue Share %"
+                value={Project2[advanceKey].revenueShare || ''}
+                sx={{ marginBottom: '10px' }}
+                onChange={(e) => handleInputChange(advanceIndex, 'revenueShare', e.target.value)}
+                />
+            </Grid>
 
-  const handleRandomize = () => {
-    // Set a random date 5 years from now
-    setSelectedDate(dayjs().add(Math.floor(Math.random() * 5), 'year'));
-   
-    // Generate random numbers for each input
-    const revenue = Math.floor(Math.random() * 100000000); // Random number between 0 and 100,000,000
-    const varCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const devCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const fixedCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const advanceAmount1 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const advanceRevenue1 = Math.floor(Math.random() * 10); // Random number between 0 and 10
-    const advanceAmount2 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const advanceRevenue2 = Math.floor(Math.random() * 10); // Random number between 0 and 10    
-    const advanceAmount3 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const advanceRevenue3 = Math.floor(Math.random() * 10); // Random number between 0 and 10        
-    const advanceAmount4 = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
-    const advanceRevenue4 = Math.floor(Math.random() * 10); // Random number between 0 and 10            
-   
-    // Format the numbers as strings with commas for thousands separator
-    const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-   
-    setInputs(prevInputs => ({
-       ...prevInputs,
-       'revenue': `$${formatNumber(revenue)}`,
-       'varCosts': `$${formatNumber(varCosts)}`,
-       'devCosts': `$${formatNumber(devCosts)}`,
-       'fixedCosts': `$${formatNumber(fixedCosts)}`,
-       'advanceAmount1': `$${formatNumber(advanceAmount1)}`,
-       'advanceRevenue1': advanceRevenue1.toString(),
-       'advanceAmount2': `$${formatNumber(advanceAmount2)}`,
-       'advanceRevenue2': advanceRevenue2.toString(),      
-       'advanceAmount3': `$${formatNumber(advanceAmount3)}`,
-       'advanceRevenue3': advanceRevenue3.toString(),       
-       'advanceAmount4': `$${formatNumber(advanceAmount4)}`,
-       'advanceRevenue4': advanceRevenue4.toString(),              
-    }));
-   
-    setShowProjectTable(true);
-   };
-   
+            <Grid item xs={12} sm={6} md={6}>
+                <CurrencyFormat
+                    customInput={TextField}
+                    label="Recoup Amount"
+                    sx={{ marginBottom: '10px' }}
+                    value={Project2[advanceKey].recoupAmount || ''}
+                    // onChange={(e) => handleInputChange(advanceIndex, 'recoupAmount', e.target.value)}
+                    onValueChange={(values) => {
+                        const { value } = values; // extract value from values object
+                        handleInputChange(advanceIndex, 'recoupAmount', value); // pass the raw value to the handler
+                      }}                    
+                    thousandSeparator={true}
+                    prefix="$"
+                    decimalScale={2}
+                    allowNegative={false}
+                    displayType="input"
+                    fullWidth
+                />
+            </Grid>        
+        </Grid>
 
-  const [selectedDate, setSelectedDate] = useState(null);
+        <InstallmentInputs
+            Project2={Project2}
+            setProject2={setProject2}
+            advanceKey={advanceKey}
+        />
+        </>
+    );
+};
+   
+const Project2Page = () => {
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [inputs, setInputs] = useState({});
+    const [valuesCal1, setCal1] = useState([])
+    const [valuesCal2, setCal2] = useState([])
+    const [valuesCal3, setCal3] = useState([])
+    const [valuesCal4, setCal4] = useState([])
+    const [showProjectTable, setShowProjectTable] = useState(false);
+    const { Project2, setProject2 } = useCSVDataContext();  // Import and use your context
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const handleInputChange = (value, field) => {
+        setProject2(prev => {
+          // Determine if the value is an event object (from an input field)
+          const finalValue = value?.target ? value.target.value : value;
+    
+          // Convert input value if necessary, handle date as a special case
+          const updatedValue = field === 'expectedLaunchDate' ? value : parseFloat(finalValue.replace(/[^0-9.-]+/g, ""));
+    
+          return {
+            ...prev,
+            [field]: updatedValue
+          };
+        });
+    };
+
+    const handleAdvanceChange = (advanceIndex: number, field: keyof Advance, value: any) => {
+        setProject2(prev => {
+
+            console.log("handle advance change");
+
+            if (advanceIndex == 1) {
+                var currentAdvance = prev.firstAdvance;
+                var fieldName = 'firstAdvance';
+            } else {
+                var currentAdvance = prev.secondAdvance;
+                var fieldName = 'secondAdvance';
+            }
+
+            console.log(prev[fieldName]);            
+            
+    
+
+            const updatedAdvance = {
+                ...currentAdvance,
+                [field]: field.includes('Date') ? value : parseFloat(value)
+            };
+
+            console.log(updatedAdvance);
+    
+            // Return the updated Project2 object
+            return { ...prev, [fieldName]: updatedAdvance };
+        });
+    };
+    
+
+    const handleSubmit = () => {
+        // Handle form submission here
+        setShowProjectTable(true);
+    };
+
+    const handleRandomize = () => {
+        // Generate random numbers for each input
+        const expectedLaunchDate = dayjs().add(Math.floor(Math.random() * 5), 'year'); // Random date 5 years from now
+        const revenue = Math.floor(Math.random() * 100000000); // Random number between 0 and 100,000,000
+        const varCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+        const devCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+        const fixedCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
+
+
+        // Function to generate random installment data
+        const randomInstallment = () => ({
+            date: dayjs().add(Math.floor(Math.random() * 5), 'year'),
+            amount: Math.floor(Math.random() * 1000000)
+        });
+
+        const firstAdvance = {
+            revenueShare: Math.floor(Math.random() * 10) + 1,
+            recoupAmount: Math.floor(Math.random() * 1000000),
+            installmentDate1: randomInstallment().date,
+            installmentAmount1: randomInstallment().amount,
+            installmentDate2: randomInstallment().date,
+            installmentAmount2: randomInstallment().amount,
+            installmentDate3: randomInstallment().date,
+            installmentAmount3: randomInstallment().amount,
+            installmentDate4: randomInstallment().date,
+            installmentAmount4: randomInstallment().amount
+        };
+    
+        const secondAdvance = {
+            revenueShare: Math.floor(Math.random() * 10) + 1,
+            recoupAmount: Math.floor(Math.random() * 1000000),
+            installmentDate1: randomInstallment().date,
+            installmentAmount1: randomInstallment().amount,
+            installmentDate2: randomInstallment().date,
+            installmentAmount2: randomInstallment().amount,
+            installmentDate3: randomInstallment().date,
+            installmentAmount3: randomInstallment().amount,
+            installmentDate4: randomInstallment().date,
+            installmentAmount4: randomInstallment().amount
+        };        
+                
+        // Update Project2 in context
+        setProject2({
+            ...Project2,
+            expectedLaunchDate,
+            revenue,
+            devCosts,
+            variableCosts: varCosts,
+            fixedCosts,
+            firstAdvance,
+            secondAdvance
+        });
+
+        setShowProjectTable(true);
+    };   
 
   return ( 
-
-    <PageContainer title="Project 1" description="Enter Your Projections:">
+    <PageContainer title="Project 2: Projections" description="Enter Your Projections:">
 
         <Grid container spacing={3}>
 
-        <Grid item xs={12} lg={12}>
-                <DashboardCard title="Project: The Cosmic Shake"></DashboardCard>
-        </Grid>     
+            {/* Title */}
+            <Grid item xs={12} lg={12}>
+                <DashboardCard title="Project 2"></DashboardCard>
+            </Grid>     
 
+            {/* User Input */}
+            <Grid item xs={12} lg={12}>
+                <DashboardCard title="Projections">                    
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} lg={4}>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle2" sx={{ padding: '14px' }}>General:</Typography>
+                            </Grid>
 
-
-        <Grid item xs={12} lg={12}>           
-            <DashboardCard title="Projections">
-                <Grid container spacing={3}>
-                    <Grid item xs={12} lg={6}>
-                        <Stack
-                        direction={{ xs: "column", sm: "column" }}
-                        spacing={1}
-                        mt={1}
-                        // alignItems="center"
-                    >
-                        
-                        {/* <input
-                                type="file"
-                                accept=".csv"
-                                style={{ display: 'none' }}
-                                onChange={(e) => handleFileInputChange(e)}
-                                ref={(input) => { fileInputRef.current = input; }}
-                            /> */}
-                            {/* <Button
-                                variant="contained"
-                                disableElevation
-                                size="small"
-                                color="primary"
-                                onClick={() => fileInputRef.current.click()}
+                            <Stack
+                                direction={{ xs: "column", sm: "column" }}
+                                spacing={1}
+                                mt={1}
                             >
-                                Import Timing Grid CSV
-                            </Button>             */}
-
-                            <CurrencyFormat
-                                label="Revenue"
-                                customInput={TextField}
-                                value={inputs.revenue || ''}
-                                onChange={(e: any) => handleInputChange(e, 'revenue')}
-                                thousandSeparator={true}
-                                prefix="$"
-                                decimalScale={2}
-                                allowNegative={false}
-                                displayType="input"
-                                sx={{ marginBottom: '10px', marginTop: '10px' }}
-                            />
-                            
-                            <CurrencyFormat
-                                customInput={TextField}
-                                label="Variable Costs"
-                                value={inputs.varCosts || ''}
-                                onChange={(e: any) => handleInputChange(e, 'varCosts')}
-                                thousandSeparator={true}
-                                prefix="$"
-                                decimalScale={2}
-                                allowNegative={false}
-                                displayType="input"
-                                sx={{ marginBottom: '10px', marginTop: '10px' }}
-                            />         
-
-                            <CurrencyFormat
-                                customInput={TextField}
-                                label="Development Cost"
-                                value={inputs.devCosts || ''}
-                                onChange={(e: any) => handleInputChange(e, 'devCosts')}
-                                thousandSeparator={true}
-                                prefix="$"
-                                decimalScale={2}
-                                allowNegative={false}
-                                displayType="input"
-                                sx={{ marginBottom: '10px', marginTop: '10px' }}
-                            />                                                        
-
-                            <CurrencyFormat
-                                customInput={TextField}
-                                label="Fixed Costs"
-                                value={inputs.fixedCosts || ''}
-                                onChange={(e: any) => handleInputChange(e, 'fixedCosts')}
-                                thousandSeparator={true}
-                                prefix="$"
-                                decimalScale={2}
-                                allowNegative={false}
-                                displayType="input"
-                                sx={{ marginBottom: '10px', marginTop: '10px' }}
-                            />                                                                              
-
-
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker1
-                                    label="Expected Launch"
-                                    value={selectedDate}
-                                    onChange={(date) => setSelectedDate(date)}
-                                    renderInput={(params: any) => <TextField {...params} />}
-                                    sx={{ marginBottom: '10px' }}
+                                <CurrencyFormat
+                                    label="Revenue"
+                                    customInput={TextField}
+                                    value={Project2.revenue || ''}
+                                    onChange={(e: any) => handleInputChange(e, 'revenue')}
+                                    thousandSeparator={true}
+                                    prefix="$"
+                                    decimalScale={2}
+                                    allowNegative={false}
+                                    displayType="input"
+                                    sx={{ marginBottom: '10px', marginTop: '10px' }}
                                 />
-                            </LocalizationProvider>
-                        </Stack>
+                                
+                                <CurrencyFormat
+                                    customInput={TextField}
+                                    label="Variable Costs"
+                                    value={Project2.variableCosts || ''}
+                                    onChange={(e: any) => handleInputChange(e, 'variableCosts')}
+                                    thousandSeparator={true}
+                                    prefix="$"
+                                    decimalScale={2}
+                                    allowNegative={false}
+                                    displayType="input"
+                                    sx={{ marginBottom: '10px', marginTop: '10px' }}
+                                />         
+
+                                <CurrencyFormat
+                                    customInput={TextField}
+                                    label="Development Cost"
+                                    value={Project2.devCosts || ''}
+                                    onChange={(e: any) => handleInputChange(e, 'devCosts')}
+                                    thousandSeparator={true}
+                                    prefix="$"
+                                    decimalScale={2}
+                                    allowNegative={false}
+                                    displayType="input"
+                                    sx={{ marginBottom: '10px', marginTop: '10px' }}
+                                />                                                        
+
+                                <CurrencyFormat
+                                    customInput={TextField}
+                                    label="Fixed Costs"
+                                    value={Project2.fixedCosts || ''}
+                                    onChange={(e: any) => handleInputChange(e, 'fixedCosts')}
+                                    thousandSeparator={true}
+                                    prefix="$"
+                                    decimalScale={2}
+                                    allowNegative={false}
+                                    displayType="input"
+                                    sx={{ marginBottom: '10px', marginTop: '10px' }}
+                                />                                                                              
+
+
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DatePicker
+                                        label="Expected Launch"
+                                        value={Project2.expectedLaunchDate ? dayjs(Project2.expectedLaunchDate) : null}
+                                        onChange={(newDate) => handleInputChange(newDate, 'expectedLaunchDate')}
+                                        renderInput={(params: any) => <TextField {...params} />}
+                                        sx={{ marginBottom: '10px' }}
+                                    />
+                                </LocalizationProvider>
+                            </Stack>
+                        </Grid>
                         
-                    </Grid>           
-
-
-
-                    <Grid item xs={12} lg={6}>
-                        <Typography variant="h6" sx={{ padding: '14px' }}>Advances:</Typography>       
-
-                        <Stack
-                        direction={{ xs: "column", sm: "row" }}
-                        spacing={1}
-                        mt={1}
-                        // alignItems="center"
-                        >
-                            <CurrencyFormat
-                                customInput={TextField}
-                                label="Amount"
-                                value={inputs.advanceAmount1 || ''}
-                                onChange={(e) => handleInputChange(e, 'advanceAmount1')}
-                                thousandSeparator={true}
-                                prefix="$"
-                                decimalScale={2}
-                                allowNegative={false}
-                                displayType="input"
-                                sx={{ marginBottom: '10px', marginTop: '10px' }}
-                            />
-
-                            <TextField
-                                label="Revenue Share %"
-                                value={inputs.advanceRevenue1 || ''}
-                                onChange={(e) => handleInputChange(e, 'advanceRevenue1')}
-                                sx={{ marginBottom: '10px' }}
-                            />
-
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker
-                                    multiple
-                                    value={valuesCal1}
-                                    onChange={setCal1}
-                                    // value={inputs.advanceCalendarDates1}
-                                    // onChange={(e) => handleInputChangeCalendar(e, 'advanceCalendarDates1')}
-                                    placeholder='Installments'
-                                    style={{ padding: '25px', fontFamily: 'inherit', fontSize: 'inherit' }}
-                                    plugins={[
-                                        <DatePanel sort="date" />,
-                                    ]}   
-                                />
-                            </LocalizationProvider>               
-                        </Stack>
-
-                        <Stack
-                        direction={{ xs: "column", sm: "row" }}
-                        spacing={1}
-                        mt={1}
-                        // alignItems="center"
-                        >
-                            <CurrencyFormat
-                                customInput={TextField}
-                                label="Amount"
-                                value={inputs.advanceAmount2 || ''}
-                                onChange={(e) => handleInputChange(e, 'advanceAmount2')}
-                                thousandSeparator={true}
-                                prefix="$"
-                                decimalScale={2}
-                                allowNegative={false}
-                                displayType="input"
-                                sx={{ marginBottom: '10px', marginTop: '10px' }}
-                            />                            
-
-                            <TextField
-                                label="Revenue Share %"
-                                value={inputs.advanceRevenue2 || ''}
-                                onChange={(e) => handleInputChange(e, 'advanceRevenue2')}
-                                sx={{ marginBottom: '10px' }}
-                            />
-
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker
-                                    multiple
-                                    value={valuesCal2}
-                                    onChange={setCal2}
-                                    placeholder='Installments'
-                                    style={{ padding: '25px', fontFamily: 'inherit', fontSize: 'inherit' }}
-                                    plugins={[
-                                        <DatePanel sort="date" />,
-                                    ]}   
-                                />
-                            </LocalizationProvider>               
-                        </Stack>
-
-                        <Stack
-                        direction={{ xs: "column", sm: "row" }}
-                        spacing={1}
-                        mt={1}
-                        // alignItems="center"
-                        >
-                            <CurrencyFormat
-                                customInput={TextField}
-                                label="Amount"
-                                value={inputs.advanceAmount3 || ''}
-                                onChange={(e) => handleInputChange(e, 'advanceAmount3')}
-                                thousandSeparator={true}
-                                prefix="$"
-                                decimalScale={2}
-                                allowNegative={false}
-                                displayType="input"
-                                sx={{ marginBottom: '10px', marginTop: '10px' }}
-                            /> 
+                        <Grid item xs={12} lg={4}>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle2" sx={{ padding: '14px' }}>Advance #1:</Typography>
+                            </Grid>                            
                             
-                            <TextField
-                                label="Revenue Share %"
-                                value={inputs.advanceRevenue3 || ''}
-                                onChange={(e) => handleInputChange(e, 'advanceRevenue3')}
-                                sx={{ marginBottom: '10px' }}
+                            <AdvanceSection
+                                inputs={inputs}
+                                advanceIndex={1}
+                                handleInputChange={handleAdvanceChange}
+                                selectedDate={selectedDate}
+                                setSelectedDate={setSelectedDate}
                             />
+                        </Grid>    
 
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                    multiple
-                                    value={valuesCal3}
-                                    onChange={setCal3}
-                                    placeholder='Installments'
-                                    style={{ padding: '25px', fontFamily: 'inherit', fontSize: 'inherit' }}
-                                    plugins={[
-                                        <DatePanel sort="date" />,
-                                    ]}                                    
-                                />
-                            </LocalizationProvider>               
-                        </Stack>
-
-                        <Stack
-                        direction={{ xs: "column", sm: "row" }}
-                        spacing={1}
-                        mt={1}
-                        // alignItems="center"
-                        >
-                            <CurrencyFormat
-                                customInput={TextField}
-                                label="Amount"
-                                value={inputs.advanceAmount4 || ''}
-                                onChange={(e) => handleInputChange(e, 'advanceAmount4')}
-                                thousandSeparator={true}
-                                prefix="$"
-                                decimalScale={2}
-                                allowNegative={false}
-                                displayType="input"
-                                sx={{ marginBottom: '10px', marginTop: '10px' }}
-                            /> 
-
-                            <TextField
-                                label="Revenue Share %"
-                                value={inputs.advanceRevenue4 || ''}
-                                onChange={(e) => handleInputChange(e, 'advanceRevenue4')}
-                                sx={{ marginBottom: '10px', marginTop: '10px' }}
+                        <Grid item xs={12} lg={4}>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle2" sx={{ padding: '14px' }}>Advance #2:</Typography>
+                            </Grid>                                                        
+                            
+                            <AdvanceSection
+                                inputs={inputs}
+                                advanceIndex={2}
+                                handleInputChange={handleAdvanceChange}
+                                selectedDate={selectedDate}
+                                setSelectedDate={setSelectedDate}
                             />
+                        </Grid>                                                                            
 
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker
-                                    multiple
-                                    value={valuesCal4}
-                                    onChange={setCal4}
-                                    placeholder='Installments'
-                                    style={{ padding: '25px', fontFamily: 'inherit', fontSize: 'inherit' }}
-                                    plugins={[
-                                        <DatePanel sort="date" />,
-                                    ]}   
-                                />
-                            </LocalizationProvider>               
-                        </Stack>                                
-                        
-                    </Grid>                  
+                        <Grid item xs={12} lg={12}>
+                            <Button size="large" variant="contained" color="primary" onClick={handleSubmit}>
+                                Calculate
+                            </Button>     
+                            <Button style={{ marginLeft: '10px'}} size="large" variant="contained" color="error" onClick={handleRandomize}>
+                                Randomize 🎲
+                            </Button>                             
+                        </Grid>
+                    </Grid>                         
+                </DashboardCard>
+            </Grid>
 
+            {/* Time Grid */}
+            <Grid item xs={12} lg={12}>
+                {showProjectTable && <TimeGrid key={Date.now()} startDate={Project2.expectedLaunchDate}/>}
+            </Grid>
 
-                    <Grid item xs={12} lg={12}>
-                        <Button size="large" variant="contained" color="primary" onClick={handleSubmit}>
-                            Calculate
-                        </Button>     
-                        <Button style={{ marginLeft: '10px'}} size="large" variant="contained" color="error" onClick={handleRandomize}>
-                            Randomize 🎲
-                        </Button>                             
-                    </Grid>                    
+            {/* Project Forecasts */}
+            <Grid item xs={12} lg={12}>
+                {showProjectTable && <ProjectTable projNumber={2} startDate={Project2.expectedLaunchDate} key={Date.now()}/>}
+            </Grid>
 
-                </Grid>
-            </DashboardCard>
-        </Grid>
-
-
-
-        <Grid item xs={12} lg={12}>
-            {showProjectTable && <TimeGrid key={Date.now()} startDate={selectedDate}/>}
-        </Grid>
-
-
-        <Grid item xs={12} lg={12}>
-            {showProjectTable && <ProjectTable inputs={inputs} calVals={[valuesCal1, valuesCal2, valuesCal3, valuesCal4]} startDate={selectedDate} key={Date.now()}/>}
-        </Grid>
-
-        <Grid item xs={12} lg={12}>
-            {showProjectTable && <CashBalance startDate={selectedDate} inputs={inputs} key={Date.now()}/>}
-        </Grid>        
-
-
+            {/* Cash Balance */}
+            <Grid item xs={12} lg={12}>
+                {showProjectTable && <CashBalance projNumber={2} startDate={Project2.expectedLaunchDate} title="Company Cash Balance w/ Project 2" key={Date.now()}/>}
+            </Grid>
         </Grid> 
     </PageContainer>
   );
 };
 
-export default TheCosmicShake;
+export default Project2Page;

@@ -14,7 +14,7 @@ import {
   import BlankCard from "../shared/BlankCard";
   import { useTheme } from "@mui/material/styles";
   import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
-  
+
   const generateTableCells = (startDate: any) => {
     const theme = useTheme();
     const cells = [];
@@ -33,80 +33,33 @@ import {
     return cells;
   };  
 
-  const calculateContributionProfit = (index: any, inputs: any) => {
-    var revTotal = getCategoryTotal("Total Revenue", inputs) * products2[0]['data'][index];
-    var variableTotal = getCategoryTotal("Variable Costs", inputs) * products2[1]['data'][index];
-    var devTotal = getCategoryTotal("-- Development", inputs) * products2[3]['data'][index];
-    var otherTotal = getCategoryTotal("-- Other", inputs) * products2[4]['data'][index];      
-    var adv1Total = inputs.advanceAmount1 ? getAdvanceTotal("Advance #1", index, revTotal, inputs) : 0;
-    var adv2Total = inputs.advanceAmount2 ? getAdvanceTotal("Advance #2", index, revTotal, inputs) : 0;
-    var adv3Total = inputs.advanceAmount3 ? getAdvanceTotal("Advance #3", index, revTotal, inputs) : 0;
-    var adv4Total = inputs.advanceAmount4 ? getAdvanceTotal("Advance #4", index, revTotal, inputs) : 0;
-    var allAdvTotal = adv1Total + adv2Total + adv3Total + adv4Total;
-    return (revTotal - variableTotal - devTotal - otherTotal + allAdvTotal).toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});    
-  };
-
-  const calculateContributionProfitNum = (index: any, inputs: any) => {
-    var revTotal = getCategoryTotal("Total Revenue", inputs) * products2[0]['data'][index];
-    var variableTotal = getCategoryTotal("Variable Costs", inputs) * products2[1]['data'][index];
-    var devTotal = getCategoryTotal("-- Development", inputs) * products2[3]['data'][index];
-    var otherTotal = getCategoryTotal("-- Other", inputs) * products2[4]['data'][index];      
-    var adv1Total = inputs.advanceAmount1 ? getAdvanceTotal("Advance #1", index, revTotal, inputs) : 0;
-    var adv2Total = inputs.advanceAmount2 ? getAdvanceTotal("Advance #2", index, revTotal, inputs) : 0;
-    var adv3Total = inputs.advanceAmount3 ? getAdvanceTotal("Advance #3", index, revTotal, inputs) : 0;
-    var adv4Total = inputs.advanceAmount4 ? getAdvanceTotal("Advance #4", index, revTotal, inputs) : 0;
-    var allAdvTotal = adv1Total + adv2Total + adv3Total + adv4Total;    
-    return (revTotal - variableTotal - devTotal - otherTotal + allAdvTotal);
-  };  
-
-  const calculateNetBalanceNum = (index: any, inputs: any) => {
-    var contribution = calculateContributionProfitNum(index, inputs)
-    var balance = products[1]['data'][index]
-    var total = balance + contribution;
-
-    return total;
-  }
-
-  const calculateNetBalance = (index:any, inputs:any) => {
-    var contribution = calculateContributionProfitNum(index, inputs)
-    var balance = products[1]['data'][index]
-    var total = balance + contribution;
-
-    return total.toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
-  }
-
-  const calculateBackgroundColor = (index:any, product:any, inputs:any, theme:any) => {
-    // backgroundColor: i === 25 ? theme.palette.warning.main : (i === 36 && value !== 1) ? theme.palette.error.main : 'inherit'
-    if (index === 25) {
-      return theme.palette.warning.main;
-    }
-
-    if (product == 'Cash Balance') {
-      var balance = calculateNetBalanceNum(index, inputs);
-      if (balance < 0) {
-        return theme.palette.error.main;
-      }
-    }
-
-
-    return 'inherit'
-  } 
-  
-  const CashBalance: React.FC<{ startDate: any; inputs: any }> = ({ startDate, inputs }) => {
+  const CashBalance: React.FC<{ startDate: any; title: any, projNumber: number }> = ({ startDate, title, projNumber }) => {
       
     const theme = useTheme();
     const categories = ['Contribution Profit', 'Cash Balance'];        
-    const { Project1, extendedTimeGrid } = useCSVDataContext();
+    const { Project1, Project2, Project3, extendedTimeGrid } = useCSVDataContext();
+
+    const whichProject = (projNumber) => {
+      if (projNumber == 1) {
+        return Project1;
+      } else if (projNumber == 2) {
+        return Project2;
+      } else {
+        return Project3;
+      }
+    }    
+
+    const currentProject = whichProject(projNumber);
 
     const calculateTotal = (index, category) => {
 
       var total = 0;
       switch(category) {       
         case "Contribution Profit":
-          var revTotal = extendedTimeGrid[index].revenuePercent / 100 * Project1.revenue;
-          var variableTotal = total = 100 / 36 / 100 * Project1.variableCosts;
-          var devTotal = extendedTimeGrid[index].developmentcostsPercent / 100 * Project1.devCosts;
-          var otherTotal = extendedTimeGrid[index].marketingexpensesPercent / 100 * Project1.fixedCosts;
+          var revTotal = extendedTimeGrid[index].revenuePercent / 100 * currentProject.revenue;
+          var variableTotal = total = 100 / 36 / 100 * currentProject.variableCosts;
+          var devTotal = extendedTimeGrid[index].developmentcostsPercent / 100 * currentProject.devCosts;
+          var otherTotal = extendedTimeGrid[index].marketingexpensesPercent / 100 * currentProject.fixedCosts;
           total =  (revTotal - variableTotal - devTotal - otherTotal);
           break;
         case "Cash Balance":
@@ -117,7 +70,7 @@ import {
     };    
 
     return (
-      <DashboardCard title="Fuchigaming Studios - Cash Balance">
+      <DashboardCard title={title}>
         <Box sx={{ overflow: "auto" }}>
           <Box sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
             <Table

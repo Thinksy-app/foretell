@@ -45,9 +45,22 @@ import * as dayjs from 'dayjs'
     return cells;
   };    
 
-  const ProjectTable = ({startDate}) => {
+
+  const ProjectTable = ({startDate, projNumber}) => {
     const theme = useTheme();
-    const { Project1, extendedTimeGrid } = useCSVDataContext();
+    const { Project1, Project2, Project3, extendedTimeGrid } = useCSVDataContext();
+
+    const whichProject = (projNumber) => {
+      if (projNumber == 1) {
+        return Project1;
+      } else if (projNumber == 2) {
+        return Project2;
+      } else {
+        return Project3;
+      }
+    }
+  
+    const currentProject = whichProject(projNumber);
     
     // menu
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -69,7 +82,7 @@ import * as dayjs from 'dayjs'
 
     const getAdvanceTotal = (index, advance, totalRevenue) => {
       if (index <= 25) {
-        var currentDate = new Date(Project1.expectedLaunchDate);
+        var currentDate = new Date(currentProject.expectedLaunchDate);
         currentDate.setMonth(currentDate.getMonth() - 25 + index);
   
         var total = 0;
@@ -94,43 +107,43 @@ import * as dayjs from 'dayjs'
       var total = 0;
       switch(category) {
         case "Total Revenue":
-          total = extendedTimeGrid[index].revenuePercent / 100 * Project1.revenue;
+          total = extendedTimeGrid[index].revenuePercent / 100 * currentProject.revenue;
           break;
         case "Variable Costs":
-          total = 100 / 36 / 100 * Project1.variableCosts * -1;
+          total = 100 / 36 / 100 * currentProject.variableCosts * -1;
           break;
         case "Fixed Costs":
-          var devCosts = extendedTimeGrid[index].developmentcostsPercent / 100 * Project1.devCosts;
-          var marketingCosts = extendedTimeGrid[index].marketingexpensesPercent / 100 * Project1.fixedCosts;
+          var devCosts = extendedTimeGrid[index].developmentcostsPercent / 100 * currentProject.devCosts;
+          var marketingCosts = extendedTimeGrid[index].marketingexpensesPercent / 100 * currentProject.fixedCosts;
           total = (devCosts + marketingCosts) * -1;
           break;
         case "-- Development":
-          total = extendedTimeGrid[index].developmentcostsPercent / 100 * Project1.devCosts * -1;
+          total = extendedTimeGrid[index].developmentcostsPercent / 100 * currentProject.devCosts * -1;
           break;
         case "-- Other":
-          total = extendedTimeGrid[index].marketingexpensesPercent / 100 * Project1.fixedCosts * -1;               
+          total = extendedTimeGrid[index].marketingexpensesPercent / 100 * currentProject.fixedCosts * -1;               
           break;
         case "Advance #1":
-          var totalRev = extendedTimeGrid[index].revenuePercent / 100 * Project1.revenue;
-          total = getAdvanceTotal(index, Project1.firstAdvance, totalRev);
+          var totalRev = extendedTimeGrid[index].revenuePercent / 100 * currentProject.revenue;
+          total = getAdvanceTotal(index, currentProject.firstAdvance, totalRev);
           break;
         case "Advance #2":
-          var totalRev = extendedTimeGrid[index].revenuePercent / 100 * Project1.revenue;
-          var revenueAfterAdvance1 = totalRev - getAdvanceTotal(index, Project1.firstAdvance, totalRev);
-          total = getAdvanceTotal(index, Project1.secondAdvance, revenueAfterAdvance1);
+          var totalRev = extendedTimeGrid[index].revenuePercent / 100 * currentProject.revenue;
+          var revenueAfterAdvance1 = totalRev - getAdvanceTotal(index, currentProject.firstAdvance, totalRev);
+          total = getAdvanceTotal(index, currentProject.secondAdvance, revenueAfterAdvance1);
           break;          
         case "Contribution Profit":
-          var revTotal = extendedTimeGrid[index].revenuePercent / 100 * Project1.revenue;
-          var variableTotal = total = 100 / 36 / 100 * Project1.variableCosts;
-          var devTotal = extendedTimeGrid[index].developmentcostsPercent / 100 * Project1.devCosts;
-          var otherTotal = extendedTimeGrid[index].marketingexpensesPercent / 100 * Project1.fixedCosts;
+          var revTotal = extendedTimeGrid[index].revenuePercent / 100 * currentProject.revenue;
+          var variableTotal = total = 100 / 36 / 100 * currentProject.variableCosts;
+          var devTotal = extendedTimeGrid[index].developmentcostsPercent / 100 * currentProject.devCosts;
+          var otherTotal = extendedTimeGrid[index].marketingexpensesPercent / 100 * currentProject.fixedCosts;
           total =  (revTotal - variableTotal - devTotal - otherTotal);
           break;
         case "Contribution Margin":
-          var revTotal = extendedTimeGrid[index].revenuePercent / 100 * Project1.revenue;
-          var variableTotal = total = 100 / 36 / 100 * Project1.variableCosts;
-          var devTotal = extendedTimeGrid[index].developmentcostsPercent / 100 * Project1.devCosts;
-          var otherTotal = extendedTimeGrid[index].marketingexpensesPercent / 100 * Project1.fixedCosts;
+          var revTotal = extendedTimeGrid[index].revenuePercent / 100 * currentProject.revenue;
+          var variableTotal = total = 100 / 36 / 100 * currentProject.variableCosts;
+          var devTotal = extendedTimeGrid[index].developmentcostsPercent / 100 * currentProject.devCosts;
+          var otherTotal = extendedTimeGrid[index].marketingexpensesPercent / 100 * currentProject.fixedCosts;
           var contributionProfit =  (revTotal - variableTotal - devTotal - otherTotal);
           if (contributionProfit <= 0) {
             return "N/A";

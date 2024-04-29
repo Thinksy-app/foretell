@@ -91,7 +91,11 @@ const CSVDataContext = createContext({
     condensedCSVData: [],
     setCondensedCSVData: () => {},
     Project1: defaultProject,    
+    Project2: defaultProject,    
+    Project3: defaultProject,    
     setProject1: (project: Project) => {},
+    setProject2: (project: Project) => {},
+    setProject3: (project: Project) => {},
     extendedTimeGrid: defaultExtendedTimeGrid
 });
   
@@ -120,6 +124,8 @@ export const CSVDataProvider = ({ children }) => {
     const [csvData, setCsvData] = useState<Array<Array<string>>>([]);
     const [condensedCSVData, setCondensedCSVData] = useState<Array<Array<string>>>([]);
     const [Project1, setProject1] = useState<Project>(defaultProject);
+    const [Project2, setProject2] = useState<Project>(defaultProject);
+    const [Project3, setProject3] = useState<Project>(defaultProject);
     const [extendedTimeGrid, setExtendedTimeGrid] = useState(defaultExtendedTimeGrid); 
 
     const setCSVData = (data) => {
@@ -128,7 +134,7 @@ export const CSVDataProvider = ({ children }) => {
     };
 
     return (
-        <CSVDataContext.Provider value={{ csvData, setCSVData, condensedCSVData, setCondensedCSVData, Project1, setProject1, extendedTimeGrid }}>
+        <CSVDataContext.Provider value={{ csvData, setCSVData, condensedCSVData, setCondensedCSVData, Project1, setProject1,  Project2, setProject2,  Project2, setProject2, extendedTimeGrid }}>
             {children}
         </CSVDataContext.Provider>
     );
