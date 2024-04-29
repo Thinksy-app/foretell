@@ -72,7 +72,6 @@ import * as dayjs from 'dayjs'
         cashBalanceRow.push(runningCashBalance.toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2}));
     }
   
-    console.log(cashBalanceRow);
     return cashBalanceRow;
   };
 
@@ -99,32 +98,57 @@ import * as dayjs from 'dayjs'
 
     const currentProject = whichProject(projNumber);
 
-    const calculateTotal = (index, category, cashBalance) => {
+    const calculateBackground = (theme, index, category, cashBalance) => {
+      if (index === 25) {
+        return theme.palette.warning.main;
+      } 
 
+      if (category == 'Cash Balance') {
+        var total = calculateTotalNum(index, category, cashBalance);
+        return total < 0 ? theme.palette.error.main : 'inherit';
+      } else {
+        return 'inherit'
+      }
+    }
+
+    const calculateTotalNum = (index, category, cashBalance) => {
       var total = 0;
       var revTotal = extendedTimeGrid[index].revenuePercent / 100 * currentProject.revenue;
-      var variableTotal = total = 100 / 36 / 100 * currentProject.variableCosts;
+      var variableTotal = 100 / 36 / 100 * currentProject.variableCosts; // Please double-check this formula as it seems to be incorrect or based on a specific assumption
       var devTotal = extendedTimeGrid[index].developmentcostsPercent / 100 * currentProject.devCosts;
       var otherTotal = extendedTimeGrid[index].marketingexpensesPercent / 100 * currentProject.fixedCosts;
       var profitTotal = revTotal - variableTotal - devTotal - otherTotal;      
-      console.log("Cash Balance: ");
-      console.log(cashBalance);
-      switch(category) {       
-        case "Contribution Profit":
-          total = profitTotal;
-          break;
-        case "Cash Balance":
-          if (cashBalance.length > index) {
-            const cashBalanceString = cashBalance[index];
-            const cleanedString = cashBalanceString.replace(/[$,]/g, '');
-            const cashBalanceNumber = parseFloat(cleanedString);          
-            total = cashBalanceNumber + profitTotal;
-            break;
-          }
+  
+      switch (category) {
+          case "Contribution Profit":
+              total = profitTotal;
+              break;
+          case "Cash Balance":
+              if (cashBalance.length > index) {
+                  // Initialize the cumulative cash balance from the previous month or starting balance
+                  const previousCashBalance = index > 0 
+                      ? parseFloat(cashBalance[index - 1].replace(/[$,]/g, '')) 
+                      : 0; // Consider starting cash balance if it's the first month
+  
+                  total = previousCashBalance + profitTotal; // Add this month's profit to the previous cash balance
+  
+                  // If it's the first month and cashBalance array is not started with initial balance
+                  if (index === 0) {
+                      total += parseFloat(cashBalance[0].replace(/[$,]/g, ''));
+                  }
+  
+                  // Format the updated cash balance and save back to the cash balance array
+                  cashBalance[index] = total.toLocaleString(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+              }
+              break;
       }
   
-      return total.toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
-    };    
+      return total
+  };       
+
+    const calculateTotal = (index, category, cashBalance) => {
+      return calculateTotalNum(index, category, cashBalance).toLocaleString(undefined, {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2});
+    };
 
     return (
       <DashboardCard title={title}>
@@ -159,8 +183,7 @@ import * as dayjs from 'dayjs'
                       align="right"
                       key={i}
                       sx={{
-                        backgroundColor: i === 25 ? theme.palette.warning.main : 'inherit',
-                        // borderTop: i === 0 ? '1.5px solid' : 'none'
+                        backgroundColor: calculateBackground(theme, i, category, cashBalance),
                       }}
                     >
                       <Typography variant="subtitle2">
