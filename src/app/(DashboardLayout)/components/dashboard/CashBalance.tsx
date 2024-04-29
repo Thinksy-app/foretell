@@ -44,6 +44,8 @@ import * as dayjs from 'dayjs'
 
   const createCashBalanceRow = (condensedData, startingCashBalance, startDate = "04/2025") => {
     // Find the index of the date in the header row
+    console.log("Condensed Data: ");
+    console.log(condensedData);
     const headerRow = condensedData[0]; // assuming the first row is your header
   
     const startIndex = headerRow.findIndex(date => {
@@ -59,7 +61,7 @@ import * as dayjs from 'dayjs'
     let runningCashBalance = startingCashBalance;
   
     // Assuming 'Net Profit' is one of the rows, find that row
-    const netProfitRow = condensedData.find(row => row[0] === "Net Profit");
+    const netProfitRow = condensedData.find(row => row[0] === "Cash Balance");
     if (!netProfitRow) {
         console.error('Net Profit row not found');
         return [];
