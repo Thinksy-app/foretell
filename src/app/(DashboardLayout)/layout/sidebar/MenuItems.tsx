@@ -73,7 +73,7 @@ const Menuitems = [
     id: uniqueId(),
     title: "Project 3",
     icon: IconDeviceGamepad2,
-    href: "/Project 3",
+    href: "/project-tres",
   },    
   // {
   //   id: uniqueId(),

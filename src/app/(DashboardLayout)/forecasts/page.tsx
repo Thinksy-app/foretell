@@ -1,5 +1,5 @@
 'use client';
-import { Typography, Grid, Box, Button } from '@mui/material';
+import { Typography, Grid, Box, Button, TextField } from '@mui/material';
 import Link from 'next/link';
 import React, { useRef, useState, createContext, useContext } from 'react';
 import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
@@ -10,9 +10,11 @@ import PageContainer from '@/app/(DashboardLayout)/components/container/PageCont
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 import ForecastTable from '../components/dashboard/ForecastTable';
 import CSVTable from '../components/dashboard/CSVTable';
+import CurrencyFormat from 'react-currency-format';
 
 const Forecasts = () => {
   const [fileSelected, setFileSelected] = useState(false);
+  const { Project1, setProject1, startingCashBalance, setStartingCashBalance } = useCSVDataContext();
   const fileInputRef = useRef<HTMLInputElement | null>(null);  
   const { csvData, setCSVData } = useCSVDataContext();
 
@@ -48,7 +50,7 @@ const Forecasts = () => {
           <DashboardCard title="Forecasts"></DashboardCard>
         </Grid>
 
-        <Grid item xs={12} lg={12}>
+        <Grid item xs={12} lg={6}>
           <DashboardCard title="Import">
             <Box>
               <Typography>
@@ -81,10 +83,35 @@ const Forecasts = () => {
           </DashboardCard>
         </Grid>          
 
-{/* 
-        <Grid item xs={12} lg={12}>
-          {fileSelected && <ForecastTable/>}
-        </Grid> */}
+        <Grid item xs={12} lg={6}>
+          <DashboardCard title="Cash Balance">
+            <Box>
+              <Typography>
+                If you'd like, include a starting cash balance. Default is $0.
+              </Typography>
+
+
+              <Box pt={2}>
+                <CurrencyFormat
+                    customInput={TextField}
+                    label="Starting Cash balance"
+                    value={startingCashBalance || ''}
+                    onValueChange={(values) => {
+                        const { value } = values;
+                        // Remove the dollar sign and commas before saving the value
+                        setStartingCashBalance(parseFloat(value.replace(/[^0-9.-]+/g, "")));
+                    }}
+                    thousandSeparator={true}
+                    prefix="$"
+                    decimalScale={2}
+                    allowNegative={false}
+                    displayType="input"
+                    sx={{ marginBottom: '2px', marginTop: '5px' }}
+                    />   
+              </Box>              
+            </Box>
+          </DashboardCard>
+        </Grid>          
 
         <Grid item xs={12} lg={12}>
           {csvData && csvData.length > 0 && <CSVTable tableData={csvData} />}

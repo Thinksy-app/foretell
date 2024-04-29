@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import TimeGrid from '../dashboard/TimeGrid';
+import * as dayjs from 'dayjs'
 
 // const CSVDataContext = createContext([]);
 
@@ -86,6 +87,8 @@ const defaultProject = {
 };
 
 const CSVDataContext = createContext({
+    startingCashBalance: 0,
+    setStartingCashBalance: () => {},
     csvData: [],
     setCSVData: () => {},
     condensedCSVData: [],
@@ -99,8 +102,8 @@ const CSVDataContext = createContext({
     extendedTimeGrid: defaultExtendedTimeGrid
 });
   
-const condenseData = (tableData) => {
-    console.log("condense data");
+const condenseData = (tableData, startingCashBalance) => {
+    const growthRate = 0.05; // 5% growth
     const requiredRows = [
         "Total Revenue",
         "Total COGS",
@@ -110,15 +113,68 @@ const condenseData = (tableData) => {
     ];
 
     // Find the header row index: assuming date-like entries are recognizable
-    const headerRowIndex = tableData.findIndex(row => 
-        row.some((cell, index) => index > 0 && !isNaN(Date.parse(cell)))
+    const headerRow = tableData.find(row => 
+        row.some(cell => cell && typeof cell === 'string' && !isNaN(Date.parse(cell)))
     );
 
-    const headerRow = headerRowIndex > -1 ? tableData[headerRowIndex] : [];
+    // Assuming the first row is the header and contains the months
+    const monthColumns = headerRow ? Array.from({ length: headerRow.length - 1 }, (_, i) => headerRow[i + 1]) : [];
+    const numberOfFutureMonths = 10 * 12; // 5 years into the future
+
+    // Add future months based on the header's last month
+    const lastMonth = monthColumns[monthColumns.length - 1] || '';
+    let currentMonth = dayjs(lastMonth, 'M/DD/YYYY');
+    for (let i = 0; i < numberOfFutureMonths; i++) {
+        currentMonth = currentMonth.add(1, 'month');
+        monthColumns.push(currentMonth.format('M/DD/YYYY'));
+    }
 
     // Filter out the specific rows and include the dynamically found header
-    return [headerRow].concat(tableData.filter(row => requiredRows.includes(row[0])));
-}
+    let condensedData = tableData.filter(row => requiredRows.includes(row[0]));
+
+    // Extend rows with projected growth for each future month
+    condensedData = condensedData.map(row => {
+        let lastValue = parseFloat(row[row.length - 1].replace(/[$,]/g, '')) || 0;
+        const extendedRow = row.slice(); // copy current row values
+
+        for (let i = row.length - 1; i < monthColumns.length; i++) {
+            lastValue *= (1 + growthRate); // apply growth
+            extendedRow.push(lastValue.toLocaleString(undefined, {style: 'currency', currency: 'USD'}));
+        }
+
+        return extendedRow;
+    });
+
+    // Extend header row with future months
+    const extendedHeaderRow = [''].concat(monthColumns);
+
+    // Calculate the cash balance row for the existing months
+    let cashBalanceRow = ['Cash Balance', ''];
+    let runningCashBalance = startingCashBalance;
+
+    const netProfitRow = condensedData.find(row => row[0] === 'Net Profit');
+    if (netProfitRow) {
+        for (let i = 2; i < netProfitRow.length; i++) {
+            const netProfitValue = parseFloat(netProfitRow[i].replace(/[$,]/g, '')) || 0;
+            runningCashBalance += netProfitValue;
+            cashBalanceRow.push(runningCashBalance.toLocaleString(undefined, {style: 'currency', currency: 'USD'}));
+        }
+    }
+
+    // Calculate the cash balance row for the future months
+    for (let i = netProfitRow.length; i < monthColumns.length; i++) {
+        const futureNetProfitValue = condensedData[4][i]; // 4 corresponds to 'Net Profit' row index in requiredRows
+        runningCashBalance += parseFloat(futureNetProfitValue.replace(/[$,]/g, '')) || 0;
+        cashBalanceRow.push(runningCashBalance.toLocaleString(undefined, {style: 'currency', currency: 'USD'}));
+    }
+
+    // Add the extended header and cash balance row to the condensed data
+    condensedData.unshift(extendedHeaderRow); // Add at the start to include header
+    condensedData.push(cashBalanceRow);
+
+    return condensedData;
+};
+
 
 export const CSVDataProvider = ({ children }) => {
     const [csvData, setCsvData] = useState<Array<Array<string>>>([]);
@@ -127,14 +183,15 @@ export const CSVDataProvider = ({ children }) => {
     const [Project2, setProject2] = useState<Project>(defaultProject);
     const [Project3, setProject3] = useState<Project>(defaultProject);
     const [extendedTimeGrid, setExtendedTimeGrid] = useState(defaultExtendedTimeGrid); 
+    const [startingCashBalance, setStartingCashBalance] = useState(0); 
 
     const setCSVData = (data) => {
         setCsvData(data);
-        setCondensedCSVData(condenseData(data));
+        setCondensedCSVData(condenseData(data, startingCashBalance));
     };
 
     return (
-        <CSVDataContext.Provider value={{ csvData, setCSVData, condensedCSVData, setCondensedCSVData, Project1, setProject1,  Project2, setProject2,  Project2, setProject2, extendedTimeGrid }}>
+        <CSVDataContext.Provider value={{ csvData, setCSVData, condensedCSVData, setCondensedCSVData, Project1, setProject1,  Project2, setProject2,  Project3, setProject3, extendedTimeGrid, startingCashBalance, setStartingCashBalance }}>
             {children}
         </CSVDataContext.Provider>
     );

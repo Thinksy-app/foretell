@@ -72,6 +72,10 @@ const Dashboard = () => {
           <Grid item xs={12} lg={12}>
             {Project2.expectedLaunchDate && <CashBalance projNumber={2} title="Project 2: Cash Balance" startDate={Project2.expectedLaunchDate} />}
           </Grid>          
+
+          <Grid item xs={12} lg={12}>
+            {Project3.expectedLaunchDate && <CashBalance projNumber={3} title="Project 3: Cash Balance" startDate={Project3.expectedLaunchDate} />}
+          </Grid>                    
           
           <Grid item xs={12} lg={12}>
             {condensedCSVData && condensedCSVData.length > 0 && <CSVTable tableData={condensedCSVData} />}

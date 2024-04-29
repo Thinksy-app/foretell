@@ -16,9 +16,9 @@ import * as dayjs from 'dayjs'
 import CurrencyFormat from 'react-currency-format';
 import { useCSVDataContext } from "@/app/(DashboardLayout)/components/shared/CSVContext";
 
-const InstallmentInputs = ({ Project1, setProject1, advanceKey }) => {
+const InstallmentInputs = ({ Project3, setProject3, advanceKey }) => {
     const handleDateChange = (date, installmentIndex) => {
-      setProject1(prev => ({
+      setProject3(prev => ({
         ...prev,
         [advanceKey]: {
           ...prev[advanceKey],
@@ -28,7 +28,7 @@ const InstallmentInputs = ({ Project1, setProject1, advanceKey }) => {
     };
   
     const handleAmountChange = (value, installmentIndex) => {
-      setProject1(prev => ({
+      setProject3(prev => ({
         ...prev,
         [advanceKey]: {
           ...prev[advanceKey],
@@ -45,7 +45,7 @@ const InstallmentInputs = ({ Project1, setProject1, advanceKey }) => {
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label={`Installment ${index + 1}: Date`}
-                  value={Project1[advanceKey][`installmentDate${index + 1}`]}
+                  value={Project3[advanceKey][`installmentDate${index + 1}`]}
                   onChange={(date) => handleDateChange(date, index)}
                   renderInput={(params) => <TextField {...params} />}
                   sx={{ marginBottom: '10px' }}
@@ -57,7 +57,7 @@ const InstallmentInputs = ({ Project1, setProject1, advanceKey }) => {
               <CurrencyFormat
                 customInput={TextField}
                 label={`Installment ${index + 1}: Amount`}
-                value={Project1[advanceKey][`installmentAmount${index + 1}`] || ''}
+                value={Project3[advanceKey][`installmentAmount${index + 1}`] || ''}
                 onChange={(e) => handleAmountChange(e.target.value, index)}
                 thousandSeparator={true}
                 prefix="$"
@@ -74,7 +74,7 @@ const InstallmentInputs = ({ Project1, setProject1, advanceKey }) => {
   };
    
 const AdvanceSection = ({ advanceIndex, inputs, handleInputChange, selectedDate, setSelectedDate }) => {
-    const { Project1, setProject1 } = useCSVDataContext();
+    const { Project3, setProject3 } = useCSVDataContext();
     const advanceKey = advanceIndex === 1 ? 'firstAdvance' : 'secondAdvance';
 
     return (
@@ -84,7 +84,7 @@ const AdvanceSection = ({ advanceIndex, inputs, handleInputChange, selectedDate,
                 <TextField
                 fullWidth
                 label="Revenue Share %"
-                value={Project1[advanceKey].revenueShare || ''}
+                value={Project3[advanceKey].revenueShare || ''}
                 sx={{ marginBottom: '10px' }}
                 onChange={(e) => handleInputChange(advanceIndex, 'revenueShare', e.target.value)}
                 />
@@ -95,7 +95,7 @@ const AdvanceSection = ({ advanceIndex, inputs, handleInputChange, selectedDate,
                     customInput={TextField}
                     label="Recoup Amount"
                     sx={{ marginBottom: '10px' }}
-                    value={Project1[advanceKey].recoupAmount || ''}
+                    value={Project3[advanceKey].recoupAmount || ''}
                     // onChange={(e) => handleInputChange(advanceIndex, 'recoupAmount', e.target.value)}
                     onValueChange={(values) => {
                         const { value } = values; // extract value from values object
@@ -112,15 +112,15 @@ const AdvanceSection = ({ advanceIndex, inputs, handleInputChange, selectedDate,
         </Grid>
 
         <InstallmentInputs
-            Project1={Project1}
-            setProject1={setProject1}
+            Project3={Project3}
+            setProject3={setProject3}
             advanceKey={advanceKey}
         />
         </>
     );
 };
    
-const Project1Page = () => {
+const Project3Page = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [inputs, setInputs] = useState({});
     const [valuesCal1, setCal1] = useState([])
@@ -128,10 +128,10 @@ const Project1Page = () => {
     const [valuesCal3, setCal3] = useState([])
     const [valuesCal4, setCal4] = useState([])
     const [showProjectTable, setShowProjectTable] = useState(false);
-    const { Project1, setProject1 } = useCSVDataContext();  // Import and use your context
+    const { Project3, setProject3 } = useCSVDataContext();  // Import and use your context
 
     const handleInputChange = (value, field) => {
-        setProject1(prev => {
+        setProject3(prev => {
           // Determine if the value is an event object (from an input field)
           const finalValue = value?.target ? value.target.value : value;
     
@@ -146,7 +146,7 @@ const Project1Page = () => {
     };
 
     const handleAdvanceChange = (advanceIndex: number, field: keyof Advance, value: any) => {
-        setProject1(prev => {
+        setProject3(prev => {
 
             console.log("handle advance change");
 
@@ -169,7 +169,7 @@ const Project1Page = () => {
 
             console.log(updatedAdvance);
     
-            // Return the updated Project1 object
+            // Return the updated Project3 object
             return { ...prev, [fieldName]: updatedAdvance };
         });
     };
@@ -182,7 +182,7 @@ const Project1Page = () => {
 
     const handleRandomize = () => {
         // Generate random numbers for each input
-        const expectedLaunchDate = dayjs().add(Math.floor(Math.random() * 5) + 3, 'year'); // Random date 5 years from now
+        const expectedLaunchDate = dayjs().add(Math.floor(Math.random() * 5), 'year'); // Random date 5 years from now
         const revenue = Math.floor(Math.random() * 100000000); // Random number between 0 and 100,000,000
         const varCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
         const devCosts = Math.floor(Math.random() * 10000000); // Random number between 0 and 10,000,000
@@ -221,9 +221,9 @@ const Project1Page = () => {
             installmentAmount4: randomInstallment().amount
         };        
                 
-        // Update Project1 in context
-        setProject1({
-            ...Project1,
+        // Update Project3 in context
+        setProject3({
+            ...Project3,
             expectedLaunchDate,
             revenue,
             devCosts,
@@ -263,7 +263,7 @@ const Project1Page = () => {
                                 <CurrencyFormat
                                     label="Revenue"
                                     customInput={TextField}
-                                    value={Project1.revenue || ''}
+                                    value={Project3.revenue || ''}
                                     onChange={(e: any) => handleInputChange(e, 'revenue')}
                                     thousandSeparator={true}
                                     prefix="$"
@@ -276,7 +276,7 @@ const Project1Page = () => {
                                 <CurrencyFormat
                                     customInput={TextField}
                                     label="Variable Costs"
-                                    value={Project1.variableCosts || ''}
+                                    value={Project3.variableCosts || ''}
                                     onChange={(e: any) => handleInputChange(e, 'variableCosts')}
                                     thousandSeparator={true}
                                     prefix="$"
@@ -289,7 +289,7 @@ const Project1Page = () => {
                                 <CurrencyFormat
                                     customInput={TextField}
                                     label="Development Cost"
-                                    value={Project1.devCosts || ''}
+                                    value={Project3.devCosts || ''}
                                     onChange={(e: any) => handleInputChange(e, 'devCosts')}
                                     thousandSeparator={true}
                                     prefix="$"
@@ -302,7 +302,7 @@ const Project1Page = () => {
                                 <CurrencyFormat
                                     customInput={TextField}
                                     label="Fixed Costs"
-                                    value={Project1.fixedCosts || ''}
+                                    value={Project3.fixedCosts || ''}
                                     onChange={(e: any) => handleInputChange(e, 'fixedCosts')}
                                     thousandSeparator={true}
                                     prefix="$"
@@ -316,7 +316,7 @@ const Project1Page = () => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DatePicker
                                         label="Expected Launch"
-                                        value={Project1.expectedLaunchDate ? dayjs(Project1.expectedLaunchDate) : null}
+                                        value={Project3.expectedLaunchDate ? dayjs(Project3.expectedLaunchDate) : null}
                                         onChange={(newDate) => handleInputChange(newDate, 'expectedLaunchDate')}
                                         renderInput={(params: any) => <TextField {...params} />}
                                         sx={{ marginBottom: '10px' }}
@@ -367,21 +367,21 @@ const Project1Page = () => {
 
             {/* Time Grid */}
             <Grid item xs={12} lg={12}>
-                {showProjectTable && <TimeGrid key={Date.now()} startDate={Project1.expectedLaunchDate}/>}
+                {showProjectTable && <TimeGrid key={Date.now()} startDate={Project3.expectedLaunchDate}/>}
             </Grid>
 
             {/* Project Forecasts */}
             <Grid item xs={12} lg={12}>
-                {showProjectTable && <ProjectTable projNumber={1} startDate={Project1.expectedLaunchDate} key={Date.now()}/>}
+                {showProjectTable && <ProjectTable projNumber={3} startDate={Project3.expectedLaunchDate} key={Date.now()}/>}
             </Grid>
 
             {/* Cash Balance */}
             <Grid item xs={12} lg={12}>
-                {showProjectTable && <CashBalance projNumber={1} startDate={Project1.expectedLaunchDate} title="Company Cash Balance w/ Project 1" key={Date.now()}/>}
+                {showProjectTable && <CashBalance projNumber={3} startDate={Project3.expectedLaunchDate} title="Company Cash Balance w/ Project 3" key={Date.now()}/>}
             </Grid>
         </Grid> 
     </PageContainer>
   );
 };
 
-export default Project1Page;
+export default Project3Page;
